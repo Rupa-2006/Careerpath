@@ -1,0 +1,151 @@
+"""
+Real exam dates. `status` says how sure we are:
+CONFIRMED only when the date was read on the official website itself.
+REPORTED when news sites agree but the official page could not be read.
+NOT_ANNOUNCED when the official website shows nothing yet.
+When a date changes, edit it in the admin and update 'Checked on'.
+"""
+from datetime import date
+
+CHECKED = date(2026, 11, 4)
+_ENGINEERING = ["btech-cse", "btech-ece", "btech-mech"]
+_ALL = [
+    "btech-cse", "btech-ece", "btech-mech", "bca", "bsc-cs", "mbbs", "bsc-nursing",
+    "bpharm", "bsc-agri", "bcom", "bba", "ca", "ba", "ba-llb",
+]
+
+DATES = [
+    {
+        "title_en": "CLAT 2027: last date to apply",
+        "title_te": "CLAT 2027: దరఖాస్తుకు చివరి తేదీ",
+        "status": "CONFIRMED",
+        "starts_on": date(2026, 11, 7),
+        "source_url": "https://consortiumofnlus.ac.in/clat-2027/",
+        "checked_on": CHECKED,
+        "courses": ["ba-llb"],
+    },
+    {
+        "title_en": "CLAT 2027 exam",
+        "title_te": "CLAT 2027 పరీక్ష",
+        "status": "CONFIRMED",
+        "starts_on": date(2026, 12, 6),
+        "source_url": "https://consortiumofnlus.ac.in/clat-2027/",
+        "checked_on": CHECKED,
+        "courses": ["ba-llb"],
+    },
+    {
+        "title_en": "JEE Main 2027 Session 1: last date to apply",
+        "title_te": "JEE Main 2027 సెషన్ 1: దరఖాస్తుకు చివరి తేదీ",
+        "status": "CONFIRMED",
+        "starts_on": date(2026, 11, 22),
+        "note_en": "Official NTA notice: apply by 22 November 2026, 11:50 PM. With a late fee of Rs. 500, you can apply from 23 to 26 November.",
+        "note_te": "NTA వెబ్‌సైట్‌లో దరఖాస్తు ఫారం తెరిచి ఉంది. చివరి తేదీ NTA నోటీసుపై వచ్చిన వార్తల నుండి తీసుకున్నాం.",
+        "source_url": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2026/10/20261024390682350.pdf",
+        "checked_on": date(2026, 11, 6),
+        "courses": _ENGINEERING,
+    },
+    {
+        "title_en": "CA Foundation exam (January 2027)",
+        "title_te": "CA ఫౌండేషన్ పరీక్ష (జనవరి 2027)",
+        "status": "REPORTED",
+        "starts_on": date(2027, 1, 3),
+        "ends_on": date(2027, 1, 9),
+        "source_url": "https://www.icai.org/",
+        "checked_on": CHECKED,
+        "courses": ["ca", "bcom"],
+    },
+    {
+        "title_en": "JEE Main 2027 Session 1 exam",
+        "title_te": "JEE Main 2027 సెషన్ 1 పరీక్ష",
+        "status": "CONFIRMED",
+        "starts_on": date(2027, 1, 20),
+        "ends_on": date(2027, 1, 28),
+        "note_en": "Official NTA notice: exam days are 20, 21, 22, 23, 24 and 28 January 2027.",
+        "note_te": "వార్తల ప్రకారం పరీక్ష రోజులు జనవరి 20 నుండి 24, 28. ఇంతకుముందు క్యాలెండర్‌లో వేరే రోజులు ఉన్నాయి.",
+        "source_url": "https://cdnbbsr.s3waas.gov.in/s3f8e59f4b2fe7c5705bf878bbd494ccdf/uploads/2026/10/20261024390682350.pdf",
+        "checked_on": date(2026, 11, 6),
+        "courses": _ENGINEERING,
+    },
+    {
+        "title_en": "AP Intermediate public exams 2027",
+        "title_te": "AP ఇంటర్మీడియట్ పబ్లిక్ పరీక్షలు 2027",
+        "status": "REPORTED",
+        "starts_on": date(2027, 2, 24),
+        "ends_on": date(2027, 3, 15),
+        "note_en": "News reports disagree on some paper dates. Use only the official timetable.",
+        "note_te": "కొన్ని పేపర్ల తేదీలపై వార్తల్లో తేడాలు ఉన్నాయి. అధికారిక టైమ్‌టేబుల్‌నే వాడండి.",
+        "source_url": "https://bie.ap.gov.in/",
+        "checked_on": CHECKED,
+        "courses": _ALL,
+    },
+    {
+        "title_en": "JEE Main 2027 Session 2 exam",
+        "title_te": "JEE Main 2027 సెషన్ 2 పరీక్ష",
+        "status": "REPORTED",
+        "starts_on": date(2027, 4, 2),
+        "ends_on": date(2027, 4, 7),
+        "source_url": "https://jeemain.nta.nic.in/",
+        "checked_on": CHECKED,
+        "courses": _ENGINEERING,
+    },
+    {
+        "title_en": "NEET UG 2027",
+        "title_te": "NEET UG 2027",
+        "status": "NOT_ANNOUNCED",
+        "note_en": "The official NEET website has no 2027 notice yet. Dates you see elsewhere are guesses. In past years the exam was held in May.",
+        "note_te": "అధికారిక NEET వెబ్‌సైట్‌లో ఇంకా 2027 నోటీసు లేదు. ఇతర చోట్ల కనిపించే తేదీలు ఊహలే. గత సంవత్సరాల్లో పరీక్ష మేలో జరిగింది.",
+        "source_url": "https://neet.nta.nic.in/",
+        "checked_on": CHECKED,
+        "courses": ["mbbs", "bsc-nursing"],
+    },
+    {
+        "title_en": "AP EAPCET 2027",
+        "title_te": "AP EAPCET 2027",
+        "status": "NOT_ANNOUNCED",
+        "note_en": "No official 2027 schedule yet. The 2026 exam was held in May.",
+        "note_te": "ఇంకా అధికారిక 2027 షెడ్యూల్ లేదు. 2026 పరీక్ష మేలో జరిగింది.",
+        "source_url": "https://cets.apsche.ap.gov.in/",
+        "checked_on": CHECKED,
+        "courses": _ENGINEERING + ["bpharm", "bsc-agri"],
+    },
+    {
+        "title_en": "TG EAPCET 2027",
+        "title_te": "TG EAPCET 2027",
+        "status": "NOT_ANNOUNCED",
+        "note_en": "The official website still shows 2026, so dates you see elsewhere are not confirmed. The 2026 exam was held in May.",
+        "note_te": "అధికారిక వెబ్‌సైట్‌లో ఇంకా 2026 వివరాలే ఉన్నాయి, కాబట్టి ఇతర చోట్ల కనిపించే తేదీలు నిర్ధారితం కావు. 2026 పరీక్ష మేలో జరిగింది.",
+        "source_url": "https://eapcet.tgche.ac.in/",
+        "checked_on": date(2026, 11, 5),
+        "courses": _ENGINEERING + ["bpharm", "bsc-agri", "bsc-nursing"],
+    },
+    {
+        "title_en": "TG LAWCET 2027",
+        "title_te": "TG LAWCET 2027",
+        "status": "NOT_ANNOUNCED",
+        "note_en": "The official website still shows 2026. The 2026 exam was held on 18 May.",
+        "note_te": "అధికారిక వెబ్‌సైట్‌లో ఇంకా 2026 వివరాలే ఉన్నాయి. 2026 పరీక్ష మే 18న జరిగింది.",
+        "source_url": "https://lawcet.tgche.ac.in/",
+        "checked_on": date(2026, 11, 5),
+        "courses": ["ba-llb"],
+    },
+    {
+        "title_en": "Telangana Intermediate public exams 2027",
+        "title_te": "తెలంగాణ ఇంటర్మీడియట్ పబ్లిక్ పరీక్షలు 2027",
+        "status": "NOT_ANNOUNCED",
+        "note_en": "We couldn't find an official 2027 timetable on the board's website yet. Use only the board's own timetable.",
+        "note_te": "బోర్డు వెబ్‌సైట్‌లో ఇంకా అధికారిక 2027 టైమ్‌టేబుల్ కనిపించలేదు. బోర్డు టైమ్‌టేబుల్‌నే నమ్మండి.",
+        "source_url": "https://tgbie.cgg.gov.in/",
+        "checked_on": date(2026, 11, 5),
+        "courses": _ALL,
+    },
+    {
+        "title_en": "AP LAWCET 2027",
+        "title_te": "AP LAWCET 2027",
+        "status": "NOT_ANNOUNCED",
+        "note_en": "No official 2027 schedule yet. The 2026 exam was held in May.",
+        "note_te": "ఇంకా అధికారిక 2027 షెడ్యూల్ లేదు. 2026 పరీక్ష మేలో జరిగింది.",
+        "source_url": "https://cets.apsche.ap.gov.in/",
+        "checked_on": CHECKED,
+        "courses": ["ba-llb"],
+    },
+]

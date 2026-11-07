@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pine: #0f3d3e;
+  --color-pine-soft: #e3efee;
+  --color-teal: #14746f;
+  --color-sun: #f4b740;
+  --color-ink: #1b2a2f;
+  --color-muted: #55666b;
+  --color-line: #dbe3e3;
+  --color-paper: #f7f8f5;
+  --color-danger: #b3261e;
+  --font-sans: "Segoe UI", "Noto Sans", "Noto Sans Telugu", "Noto Sans Devanagari", system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-bold leading-tight text-pine;
+  }
+  a {
+    @apply text-teal;
+  }
+  :focus-visible {
+    @apply outline-3 outline-offset-2 outline-sun;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center rounded-lg px-5 py-2 font-semibold no-underline transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply bg-teal text-white hover:bg-pine;
+  }
+  .btn-sun {
+    @apply bg-sun text-pine hover:bg-[#e5a72c];
+  }
+  .btn-outline {
+    @apply border-2 border-teal bg-transparent text-teal hover:bg-pine-soft;
+  }
+  .btn-danger {
+    @apply bg-danger text-white hover:bg-[#8c1d18];
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-white p-5 shadow-sm;
+  }
+  a.card {
+    @apply transition hover:-translate-y-0.5 hover:shadow-md;
+  }
+  .input {
+    @apply min-h-11 w-full rounded-lg border border-[#b8c4c5] bg-white px-3 py-2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

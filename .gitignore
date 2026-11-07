@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+backend/.devdb/
+node_modules/
+frontend/dist/
+backend/.devdb.log
+backend/daily-update.log
+backend/backups/
+*.log
