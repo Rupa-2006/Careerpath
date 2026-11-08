@@ -4,23 +4,11 @@ import { api, type ApiError, type RoadmapSummary, type Skill } from '../api/clie
 import { Notice } from '../components/Form'
 import { ReportForm } from '../components/Journey'
 import { SourceLine } from '../components/Trust'
-import { useMyPath } from '../context/useMyCourse'
+import { useMyPath, useMySkills } from '../context/useMyCourse'
 import { useLang, type TextKey } from '../context/Language'
 
 const CATEGORIES = ['communication', 'thinking', 'aptitude', 'programming', 'technical', 'domain', 'certifications', 'internship'] as const
 const categoryKey = (category: string) => `cat_${category}` as TextKey
-// The same list the skill gap on each career page uses, so a tick shows up in both places.
-const STORAGE_KEY = 'careerpath-my-skills'
-
-function saved(): string[] {
-  try {
-    const value = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
-    return Array.isArray(value) ? value : []
-  } catch {
-    return []
-  }
-}
-
 function SkillCard({ skill, have, onToggle }: { skill: Skill; have: boolean; onToggle: () => void }) {
   const { t } = useLang()
   return (
@@ -54,7 +42,7 @@ export function Skills() {
   const [roadmaps, setRoadmaps] = useState<RoadmapSummary[]>([])
   const [roadmap, setRoadmap] = useState(myPath)
   const [category, setCategory] = useState('')
-  const [have, setHave] = useState<string[]>(saved)
+  const { have, toggle } = useMySkills()
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -64,16 +52,6 @@ export function Skills() {
   useEffect(() => {
     api.roadmaps(lang).then(setRoadmaps).catch(() => setRoadmaps([]))
   }, [lang])
-
-  function toggle(slug: string) {
-    const updated = have.includes(slug) ? have.filter((item) => item !== slug) : [...have, slug]
-    setHave(updated)
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
-    } catch {
-      // Private browsing can block storage. The ticks still work until the page closes.
-    }
-  }
 
   const all = skills ?? []
   const shown = all.filter((skill) => !category || skill.category === category)

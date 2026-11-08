@@ -36,7 +36,7 @@ export function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <a href="#main" className="absolute -left-96 top-2 rounded bg-white px-3 py-2 focus:left-2">{t('skip')}</a>
-      <header className="sticky top-0 z-20 bg-pine text-white">
+      <header className="sticky top-0 z-20 bg-pine text-white print:hidden">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 px-4 py-2">
           <Link to="/" className="text-xl font-extrabold text-white no-underline">
             Career<span className="text-sun">Path</span>
@@ -79,7 +79,7 @@ export function Layout() {
         <Outlet />
       </main>
 
-      <footer className="bg-pine px-4 py-6 text-sm text-white/85">
+      <footer className="bg-pine px-4 py-6 text-sm text-white/85 print:hidden">
         <div className="mx-auto max-w-7xl">
           <p className="font-bold text-white">CareerPath: Discover Your Future</p>
           <p className="mt-1">{t('footer_note')}</p>

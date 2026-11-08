@@ -1,35 +1,12 @@
-import { useState } from 'react'
 import type { Skill } from '../api/client'
 
-const STORAGE_KEY = 'careerpath-my-skills'
-
-function saved(): string[] {
-  try {
-    const value = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
-    return Array.isArray(value) ? value : []
-  } catch {
-    return []
-  }
-}
-
 /** Compares what a student can do with what the chosen path needs. Saved only in this browser. */
-export function SkillGap({ skills: all, career }: { skills: Skill[]; career: string }) {
-  const [have, setHave] = useState<string[]>(saved)
+export function SkillGap({ skills: all, career, have, toggle }: { skills: Skill[]; career: string; have: string[]; toggle: (slug: string) => void }) {
   // Skills for this career come first, then skills every career needs
   const skills = [...all.filter((skill) => !skill.for_all), ...all.filter((skill) => skill.for_all)]
   const done = skills.filter((skill) => have.includes(skill.slug))
   const missing = skills.filter((skill) => !have.includes(skill.slug))
   const next = missing[0]
-
-  function toggle(slug: string) {
-    const updated = have.includes(slug) ? have.filter((item) => item !== slug) : [...have, slug]
-    setHave(updated)
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
-    } catch {
-      // Private browsing can block storage. The ticks still work until the page closes.
-    }
-  }
 
   return (
     <section className="mt-8">
