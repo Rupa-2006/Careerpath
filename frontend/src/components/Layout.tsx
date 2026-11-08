@@ -85,7 +85,8 @@ export function Layout() {
           <p className="mt-1">{t('footer_note')}</p>
           <p className="mt-2 flex flex-wrap gap-4">
             <Link to="/quiz" className="text-white">{t('take_quiz')}</Link>
-            <Link to="/dates" className="text-white">{t('see_dates')}</Link>
+            <Link to="/skills" className="text-white">Skills checklist</Link>
+            <Link to="/compare" className="text-white">Compare courses</Link>
           </p>
         </div>
       </footer>

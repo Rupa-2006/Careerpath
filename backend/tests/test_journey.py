@@ -72,7 +72,7 @@ def test_roadmaps_wait_for_review(client):
 
 def test_every_course_from_the_first_version_keeps_its_roadmap(client, show_all):
     roadmaps = client.get(f"{API}/roadmaps").json()
-    assert len(roadmaps) == 32 and sum(item["step_count"] for item in roadmaps) == 217
+    assert len(roadmaps) == 32 and sum(item["step_count"] for item in roadmaps) == 297
 
 
 def test_roadmap_detail_and_years(client, show_all):
@@ -155,7 +155,7 @@ def test_reloading_keeps_review_status_and_makes_no_duplicates(admin_client, db)
     seed_journey.main()
     db.expire_all()
     assert db.scalar(select(Roadmap).where(Roadmap.slug == "advocate")).status == "verified"
-    assert db.scalar(select(func.count()).select_from(RoadmapStep)) == 217
+    assert db.scalar(select(func.count()).select_from(RoadmapStep)) == 297
     assert db.scalar(select(func.count()).select_from(Translation)) == before
     admin_client.post(f"{API}/admin/review/roadmap/{roadmap.id}", json={"status": "pending_verification"})
 
@@ -402,3 +402,16 @@ def test_link_check_labels():
 def test_telugu_for_a_course(client, show_all):
     assert any("ఀ" <= char <= "౿" for char in client.get(f"{API}/courses/mbbs", params={"lang": "te"}).json()["summary"])
     assert client.get(f"{API}/courses/mbbs").json()["roadmaps"][0]["slug"] == "doctor"
+
+
+def test_no_roadmap_is_thin(client):
+    """Each roadmap should guide the student through the whole course, not just a few steps."""
+    from scripts.stepora.roadmaps import GOALS
+    from scripts.stepora.roadmaps_more import MORE_GOALS
+    from scripts.stepora.roadmaps_path import PATH_GOALS
+    from scripts.stepora.roadmaps_path2 import MORE_PATH_GOALS
+    import scripts.seed_journey  # noqa: F401  (adds the extra steps)
+    for goal in GOALS + MORE_GOALS + PATH_GOALS + MORE_PATH_GOALS:
+        assert len(goal["steps"]) >= 7, goal["slug"]
+        places = [(s[0], s[1], s[2]) for s in goal["steps"]]
+        assert len(places) == len(set(places)), goal["slug"]

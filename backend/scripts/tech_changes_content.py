@@ -1,5 +1,5 @@
 """
-Real technology changes, each read on its official source on 7 November 2026.
+Real technology changes, each read on its official source on 7 or 8 November 2026.
 level is essential, emerging, optional or outdated. Every record must give a reason and a source.
 """
 
@@ -90,4 +90,40 @@ TECH_CHANGES = [
      "Animal, human and environmental health are being treated as connected.",
      "Find one disease that spreads between animals and people, and write how it is controlled.",
      "woah-one-health", ["animal-and-fisheries"]),
+    # Added on 8 November 2026, each read on its official source that day.
+    ("dgca-electronic-pilot-licence", "Electronic licences for pilots", "essential",
+     "DGCA began electronic personnel licences in February 2025, starting with the Commercial Pilot's Licence, and added the Airline Transport Pilot Licence in January 2026. The licence is shown through the eGCA mobile app.",
+     "Pilot paperwork is moving online, so trainees should be comfortable with DGCA's digital systems from the start.",
+     "Read the DGCA and PIB pages on electronic licences, and learn how the eGCA app is used.",
+     "dgca-epl", ["pilot"]),
+    ("pm-e-drive", "PM E-DRIVE and electric vehicles", "emerging",
+     "The Ministry of Heavy Industries runs the PM E-DRIVE scheme to speed up electric vehicle adoption, build charging stations and support EV manufacturing in India.",
+     "Vehicles are moving from engines to motors and batteries, so mechanical engineers who understand EVs may have more options.",
+     "Learn how an electric motor and a battery pack work, then read the PM E-DRIVE page.",
+     "pm-e-drive", ["mechanical-engineer", "electrical-engineer"]),
+    ("fssai-hygiene-rating", "FSSAI Hygiene Rating for hotels and restaurants", "essential",
+     "FSSAI's voluntary Hygiene Rating Scheme rates food businesses such as hotels, restaurants and cafeterias on hygiene, after checks by recognised audit agencies.",
+     "Guests can now see how clean a kitchen is, so hotel managers are judged on food safety as well as service.",
+     "Read FSSAI's hygiene rating page, then check one kitchen against the basic hygiene rules.",
+     "fssai-hygiene", ["hotel-manager"]),
+    ("mission-karmayogi", "Mission Karmayogi online training for government staff", "emerging",
+     "Under Mission Karmayogi, government officials learn through the iGOT Karmayogi online platform, which keeps a record of their learning.",
+     "A government job now comes with continuous online learning, not just one exam at the start.",
+     "Read the DoPT page on Mission Karmayogi, and build the habit of finishing short online courses.",
+     "karmayogi", ["government-exams", "civil-services"]),
+    ("nda-women-cadets", "Women can join the NDA", "essential",
+     "UPSC's NDA and Naval Academy notices now include vacancies for women candidates, with separate merit lists for men and women.",
+     "Officer training through the NDA is now open to girls after Class 12, so more students can plan for it.",
+     "Read the latest UPSC NDA notice yourself, including the medical and physical standards.",
+     "upsc-nda-2026", ["defence-officer"]),
+    ("skill-india-digital-hub", "Skill India Digital Hub", "essential",
+     "The Skill India Digital Hub brings skill courses, skill certification, apprenticeships and jobs together in one government portal.",
+     "Vocational students can find certified courses and apprenticeships in one place.",
+     "Register on the Skill India Digital Hub, and look for one certified course in your trade.",
+     "sidh", ["vocational-professional"]),
+    ("ondc-open-commerce", "ONDC: India's open network for online selling", "emerging",
+     "ONDC connects sellers, buyer apps and delivery services through one open network, across retail, logistics, mobility, travel and financial services.",
+     "Even small businesses can now sell online without depending on one big platform, which changes how businesses reach customers.",
+     "Read the ONDC website, then write how a small local shop could use it.",
+     "ondc", ["business-manager"]),
 ]

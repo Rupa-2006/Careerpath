@@ -1,32 +1,31 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api, type ApiError, type RoadmapSummary, type Skill } from '../api/client'
 import { Notice } from '../components/Form'
 import { ReportForm } from '../components/Journey'
-import { SourceLine, TrustBadge } from '../components/Trust'
-import { useAuth } from '../context/AuthContext'
+import { SourceLine } from '../components/Trust'
+import { useMyPath } from '../context/useMyCourse'
 import { useLang, type TextKey } from '../context/Language'
 
 const CATEGORIES = ['communication', 'thinking', 'aptitude', 'programming', 'technical', 'domain', 'certifications', 'internship'] as const
 const categoryKey = (category: string) => `cat_${category}` as TextKey
+// The same list the skill gap on each career page uses, so a tick shows up in both places.
+const STORAGE_KEY = 'careerpath-my-skills'
 
-function SkillCard({ skill, canTrack, onChange }: { skill: Skill; canTrack: boolean; onChange: (state: Skill['state']) => void }) {
+function saved(): string[] {
+  try {
+    const value = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
+    return Array.isArray(value) ? value : []
+  } catch {
+    return []
+  }
+}
+
+function SkillCard({ skill, have, onToggle }: { skill: Skill; have: boolean; onToggle: () => void }) {
   const { t } = useLang()
-  const choice = (state: 'learning' | 'done', label: TextKey) => (
-    <button
-      type="button" aria-pressed={skill.state === state} onClick={() => onChange(state)}
-      className={`btn !min-h-9 !px-3 !py-1 text-sm ${skill.state === state ? 'btn-primary' : 'btn-outline'}`}
-    >
-      {skill.state === state ? '✓ ' : ''}{t(label)}
-    </button>
-  )
-
   return (
-    <li className={`card flex flex-col gap-2 ${skill.state === 'done' ? 'border-[#2e7d32] bg-[#f4fbf5]' : ''}`}>
-      <div className="flex flex-wrap items-center gap-2">
-        <h3 className="flex-1 basis-40 text-lg">{skill.name}</h3>
-        <TrustBadge status={skill.status} />
-      </div>
+    <li className={`card flex flex-col gap-2 ${have ? 'border-[#2e7d32] bg-[#f4fbf5]' : ''}`}>
+      <h3 className="text-lg">{skill.name}</h3>
       <p>{skill.why}</p>
       <p className="rounded-lg bg-[#fff7e6] p-2"><strong>🛠 {t('try_project')}:</strong> {skill.project}</p>
       <p className="flex flex-wrap items-center gap-2">
@@ -35,13 +34,14 @@ function SkillCard({ skill, canTrack, onChange }: { skill: Skill; canTrack: bool
           <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="rounded-full border border-line px-3 py-0.5 text-sm no-underline hover:border-teal">{link.label} ↗</a>
         ))}
       </p>
-      {canTrack && (
-        <div className="mt-auto flex flex-wrap gap-2 pt-1">
-          {choice('learning', 'state_learning')}
-          {choice('done', 'state_done')}
-          {skill.state && <button type="button" className="cursor-pointer text-sm text-muted underline" onClick={() => onChange(null)}>{t('state_clear')}</button>}
-        </div>
-      )}
+      <div className="mt-auto pt-1">
+        <button
+          type="button" aria-pressed={have} onClick={onToggle}
+          className={`btn !min-h-9 !px-3 !py-1 text-sm ${have ? 'btn-primary' : 'btn-outline'}`}
+        >
+          {have ? '✓ I can do this' : 'I can do this'}
+        </button>
+      </div>
       <SourceLine record={skill} />
     </li>
   )
@@ -49,38 +49,37 @@ function SkillCard({ skill, canTrack, onChange }: { skill: Skill; canTrack: bool
 
 export function Skills() {
   const { t, lang } = useLang()
-  const { user } = useAuth()
+  const { slug: myPath } = useMyPath()
   const [skills, setSkills] = useState<Skill[] | null>(null)
   const [roadmaps, setRoadmaps] = useState<RoadmapSummary[]>([])
-  const [roadmap, setRoadmap] = useState('')
+  const [roadmap, setRoadmap] = useState(myPath)
   const [category, setCategory] = useState('')
+  const [have, setHave] = useState<string[]>(saved)
   const [error, setError] = useState('')
 
-  const load = useCallback(() => {
+  useEffect(() => {
     api.skills(lang, roadmap).then(setSkills).catch((problem: ApiError) => setError(problem.message))
   }, [lang, roadmap])
-
-  useEffect(load, [load, user])
 
   useEffect(() => {
     api.roadmaps(lang).then(setRoadmaps).catch(() => setRoadmaps([]))
   }, [lang])
 
-  async function change(skill: Skill, state: Skill['state']) {
-    setError('')
+  function toggle(slug: string) {
+    const updated = have.includes(slug) ? have.filter((item) => item !== slug) : [...have, slug]
+    setHave(updated)
     try {
-      await (state && state !== skill.state ? api.setSkill(skill.id, state) : api.clearSkill(skill.id))
-      load()
-    } catch (problem) {
-      setError((problem as ApiError).message)
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+    } catch {
+      // Private browsing can block storage. The ticks still work until the page closes.
     }
   }
 
-  const shown = (skills ?? []).filter((skill) => !category || skill.category === category)
+  const all = skills ?? []
+  const shown = all.filter((skill) => !category || skill.category === category)
   const groups = CATEGORIES.filter((item) => shown.some((skill) => skill.category === item))
-  const done = (skills ?? []).filter((skill) => skill.state === 'done').length
-  const learning = (skills ?? []).filter((skill) => skill.state === 'learning').length
-  const total = skills?.length ?? 0
+  const done = all.filter((skill) => have.includes(skill.slug)).length
+  const career = roadmaps.find((item) => item.slug === roadmap)?.name
 
   return (
     <>
@@ -88,30 +87,26 @@ export function Skills() {
       <p className="mt-2 max-w-2xl text-muted">{t('skills_help')}</p>
       <Notice kind="error">{error}</Notice>
 
-      {total > 0 && (
-        <section className="card mt-4 max-w-3xl">
-          {user ? (
-            <>
-              <h2 className="text-xl">{t('my_checklist')}</h2>
-              <p className="mb-1 mt-1">{done} / {total} {t('skills_done')} · {learning} {t('learning_now')}</p>
-              <progress max={total} value={done} className="h-3 w-full accent-teal" />
-            </>
-          ) : (
-            <p>{t('log_in_skills')} <Link to="/login">{t('log_in')}</Link> · <Link to="/register">{t('sign_up')}</Link></p>
-          )}
-        </section>
-      )}
-
-      <div className="mt-4 max-w-sm">
+      <section className="card mt-4 max-w-3xl">
         <label>
           <span className="mb-1 block font-semibold">{t('skills_for')}</span>
-          <select className="input" value={roadmap} onChange={(event) => setRoadmap(event.target.value)}>
+          <select className="input max-w-sm" value={roadmap} onChange={(event) => setRoadmap(event.target.value)}>
             <option value="">{t('all_careers')}</option>
-            {roadmaps.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
+            {roadmaps.map((item) => <option key={item.slug} value={item.slug}>{item.name}{item.slug === myPath ? ' (my path)' : ''}</option>)}
           </select>
         </label>
-      </div>
-      <div className="mt-3 flex flex-wrap gap-2">
+        {all.length > 0 && (
+          <>
+            <p className="mb-1 mt-3">
+              You can do <strong>{done} of {all.length}</strong> skills{career ? ` for ${career}` : ''}. Your ticks stay on this device. No account is needed.
+            </p>
+            <progress max={all.length} value={done} className="h-3 w-full accent-teal" aria-label="Skills you can do" />
+          </>
+        )}
+        {roadmap && <p className="mt-2 text-sm"><Link to={`/roadmaps/${roadmap}`}>See the full roadmap →</Link></p>}
+      </section>
+
+      <div className="mt-4 flex flex-wrap gap-2">
         {[['', t('all_skills')] as const, ...CATEGORIES.map((item) => [item, t(categoryKey(item))] as const)].map(([value, label]) => (
           <button
             key={value} type="button" aria-pressed={category === value} onClick={() => setCategory(value)}
@@ -128,7 +123,7 @@ export function Skills() {
           <h2 className="mt-6 text-2xl">{t(categoryKey(group))}</h2>
           <ul className="mt-3 grid gap-4 md:grid-cols-2">
             {shown.filter((skill) => skill.category === group).map((skill) => (
-              <SkillCard key={skill.id} skill={skill} canTrack={Boolean(user)} onChange={(state) => change(skill, state)} />
+              <SkillCard key={skill.id} skill={skill} have={have.includes(skill.slug)} onToggle={() => toggle(skill.slug)} />
             ))}
           </ul>
         </section>

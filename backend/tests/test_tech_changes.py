@@ -39,4 +39,5 @@ def test_list_shows_with_a_source(client, show_all):
 def test_a_change_reaches_only_the_careers_it_affects(client, show_all):
     cyber = {row["slug"] for row in client.get(URL, params={"roadmap": "cyber-security-analyst"}).json()}
     assert cyber == {"owasp-top-10-2025", "post-quantum-cryptography"}
-    assert client.get(URL, params={"roadmap": "pilot"}).json() == []
+    pilot = {row["slug"] for row in client.get(URL, params={"roadmap": "pilot"}).json()}
+    assert pilot == {"dgca-electronic-pilot-licence"}

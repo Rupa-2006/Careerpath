@@ -89,7 +89,10 @@ export function ChooseCourse() {
           </li>
         ))}
       </ul>
-      <p className="mt-5"><Link to="/all-courses" className="font-semibold">Can't find it? See the full course list →</Link></p>
+      <p className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
+        {courses && courses.length >= 2 && <Link to={`/compare?area=${encodeURIComponent(field)}`} className="font-semibold">Not sure? Compare these courses side by side →</Link>}
+        <Link to="/all-courses" className="font-semibold">Can't find it? See the full course list →</Link>
+      </p>
     </>
   )
 }

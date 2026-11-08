@@ -26,6 +26,9 @@ from scripts.stepora.roadmaps import GOALS
 from scripts.stepora.roadmaps_more import MORE_GOALS
 from scripts.stepora.roadmaps_path import PATH_GOALS
 from scripts.stepora.roadmaps_path2 import MORE_PATH_GOALS
+from scripts.stepora.roadmaps_extra import with_extra_steps
+
+with_extra_steps(MORE_GOALS + PATH_GOALS + MORE_PATH_GOALS)
 
 ROADMAP_SOURCES = {
     "web-developer": "aicte", "cyber-security-analyst": "cert-in", "data-analyst": "data-gov",

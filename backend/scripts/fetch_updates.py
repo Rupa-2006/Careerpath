@@ -38,6 +38,7 @@ FEEDS = [
     ("Bar and Bench", "https://www.barandbench.com/feed", ["advocate", "company-secretary"]),
     ("Hospitality Net", "https://www.hospitalitynet.org/news/global.xml", ["hotel-manager"]),
     ("ScienceDaily fitness", "https://www.sciencedaily.com/rss/health_medicine/fitness.xml", ["physical-education-teacher", "physiotherapist"]),
+    ("Economic Times careers", "https://economictimes.indiatimes.com/jobs/rssfeeds/107115.cms", ["business-manager", "government-exams", "vocational-professional"]),
     ("Defense News", "https://www.defensenews.com/arc/outboundfeeds/rss/", ["defence-officer"]),
 ]
 ITEMS_PER_FEED = 8

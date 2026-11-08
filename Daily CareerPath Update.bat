@@ -17,4 +17,10 @@ cd /d "%ROOT%\backend"
 venv\Scripts\python -m scripts.watch_sources >> "%LOG%" 2>&1
 venv\Scripts\python -m scripts.fetch_updates >> "%LOG%" 2>&1
 venv\Scripts\python -m scripts.sync_official >> "%LOG%" 2>&1
+rem Backups: the database and the code history go to OneDrive, so nothing is lost if this laptop breaks.
+venv\Scripts\python -m scripts.backup_db >> "%LOG%" 2>&1
+cd /d "%ROOT%"
+git add -A >> "%LOG%" 2>&1
+git commit -q -m "Daily snapshot %date%" >> "%LOG%" 2>&1
+git bundle create "%OneDrive%\CareerPath-backups\careerpath-code.bundle" --all >> "%LOG%" 2>&1
 echo Finished >> "%LOG%"
