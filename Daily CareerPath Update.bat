@@ -10,7 +10,7 @@ netstat -ano | findstr "127.0.0.1:5433" | findstr "LISTENING" >nul
 if errorlevel 1 (
   echo Starting the database >> "%LOG%"
   start "CareerPath database - keep this window open" /min /d "%ROOT%\backend" cmd /k venv\Lib\site-packages\pgserver\pginstall\bin\postgres.exe -D .devdb -p 5433 -h 127.0.0.1
-  timeout /t 10 /nobreak >nul
+  ping -n 11 127.0.0.1 >nul
 )
 
 cd /d "%ROOT%\backend"
