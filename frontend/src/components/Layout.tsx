@@ -1,4 +1,3 @@
-import { InstallApp } from './InstallApp'
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -90,7 +89,6 @@ export function Layout() {
             <Link to="/compare" className="text-white">Compare courses</Link>
             <Link to="/compare-careers" className="text-white">Compare careers</Link>
           </p>
-          <InstallApp className="mt-3 !border-white !text-white" />
         </div>
       </footer>
     </div>
