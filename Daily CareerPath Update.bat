@@ -24,6 +24,8 @@ venv\Scripts\python -m scripts.backup_db >> "%LOG%" 2>&1
 cd /d "%ROOT%"
 git add -A >> "%LOG%" 2>&1
 git commit -q -m "Daily snapshot %date%" >> "%LOG%" 2>&1
+rem Upload the day's code to GitHub (github.com/Rupa-2006/Careerpath). Secrets and data never go there.
+git push -q origin main >> "%LOG%" 2>&1
 git bundle create "%OneDrive%\CareerPath-backups\careerpath-code.bundle" --all >> "%LOG%" 2>&1
 echo Finished >> "%LOG%"
 goto :eof
