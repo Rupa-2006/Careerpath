@@ -23,7 +23,7 @@ function SaveBanner() {
 }
 
 export function MyPath() {
-  const { slug, from, choose } = useMyPath()
+  const { slug, from, choose, fixed } = useMyPath()
   const { done } = useDoneSteps()
   const { have, toggle } = useMySkills()
   const [roadmap, setRoadmap] = useState<RoadmapDetail | null>(null)
@@ -78,7 +78,7 @@ export function MyPath() {
       <div className="mt-3 flex flex-wrap gap-2">
         <Link to={`/roadmaps/${roadmap.slug}${from ? `?${from}` : ''}`} className="btn btn-primary">Open my full path</Link>
         <Link to={`/compare-careers?a=${roadmap.slug}`} className="btn btn-outline">Compare with another career</Link>
-        <button type="button" className="btn btn-outline" onClick={() => { choose(''); setRoadmap(null) }}>Change my career</button>
+        {!fixed && <button type="button" className="btn btn-outline" onClick={() => { choose(''); setRoadmap(null) }}>Change my career</button>}
       </div>
 
       <ProgressTracker roadmap={roadmap} done={done} skills={skills} have={have} />

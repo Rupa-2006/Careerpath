@@ -4,7 +4,7 @@ import { api, type ApiError, type RoadmapSummary, type Skill } from '../api/clie
 import { Notice } from '../components/Form'
 import { ReportForm } from '../components/Journey'
 import { SourceLine } from '../components/Trust'
-import { shortName, useFocus, useMyPath, useMySkills } from '../context/useMyCourse'
+import { useMyPath, useMySkills } from '../context/useMyCourse'
 import { useLang, type TextKey } from '../context/Language'
 
 const CATEGORIES = ['communication', 'thinking', 'aptitude', 'programming', 'technical', 'domain', 'certifications', 'internship'] as const
@@ -38,11 +38,9 @@ function SkillCard({ skill, have, onToggle }: { skill: Skill; have: boolean; onT
 export function Skills() {
   const { t, lang } = useLang()
   const { slug: myPath } = useMyPath()
-  const { focused } = useFocus()
   const [skills, setSkills] = useState<Skill[] | null>(null)
   const [roadmaps, setRoadmaps] = useState<RoadmapSummary[]>([])
-  const [picked, setRoadmap] = useState(myPath)
-  const roadmap = focused ? myPath : picked
+  const [roadmap, setRoadmap] = useState(myPath)
   const [category, setCategory] = useState('')
   const { have, toggle } = useMySkills()
   const [error, setError] = useState('')
@@ -63,21 +61,21 @@ export function Skills() {
 
   return (
     <>
-      <h1 className="text-3xl">{focused && career ? `Skills for a ${shortName(career)}` : t('skills_title')}</h1>
+      <h1 className="text-3xl">{t('skills_title')}</h1>
       <p className="mt-2 max-w-2xl text-muted">{t('skills_help')}</p>
       <Notice kind="error">{error}</Notice>
 
       <section className="card mt-4 max-w-3xl">
-        {!focused && <label>
+        <label>
           <span className="mb-1 block font-semibold">{t('skills_for')}</span>
           <select className="input max-w-sm" value={roadmap} onChange={(event) => setRoadmap(event.target.value)}>
             <option value="">{t('all_careers')}</option>
             {roadmaps.map((item) => <option key={item.slug} value={item.slug}>{item.name}{item.slug === myPath ? ' (my path)' : ''}</option>)}
           </select>
-        </label>}
+        </label>
         {all.length > 0 && (
           <>
-            <p className={`mb-1 ${focused ? '' : 'mt-3'}`}>
+            <p className="mb-1 mt-3">
               You can do <strong>{done} of {all.length}</strong> skills{career ? ` for ${career}` : ''}. Your ticks stay on this device. No account is needed.
             </p>
             <progress max={all.length} value={done} className="h-3 w-full accent-teal" aria-label="Skills you can do" />

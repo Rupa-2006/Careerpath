@@ -18,7 +18,7 @@ from sqlalchemy import text  # noqa: E402
 from app.core.config import BACKEND_DIR  # noqa: E402
 from app.core.database import SessionLocal, engine  # noqa: E402
 from app.main import app  # noqa: E402
-from app.models import User  # noqa: E402
+from app.models import Roadmap, User  # noqa: E402
 from app.core.security import hash_password  # noqa: E402
 from scripts import seed_reference  # noqa: E402
 
@@ -56,8 +56,22 @@ def db():
 
 
 @pytest.fixture
-def student(client):
-    response = client.post("/api/v1/auth/register", json={"email": "asha@example.com", "password": PASSWORD})
+def career():
+    """Sign-up needs a career path. Adds one for the test only if the test hasn't loaded the real roadmaps."""
+    with SessionLocal() as session:
+        made = session.scalar(text("select 1 from roadmaps where slug = 'web-developer'")) is None
+        if made:
+            session.add(Roadmap(slug="web-developer", name="Web Developer", description="Test career", status="published"))
+            session.commit()
+    yield
+    if made:
+        with engine.begin() as connection:
+            connection.execute(text("delete from roadmaps where slug = 'web-developer'"))
+
+
+@pytest.fixture
+def student(client, career):
+    response = client.post("/api/v1/auth/register", json={"email": "asha@example.com", "password": PASSWORD, "path": "web-developer"})
     assert response.status_code == 201
     return response.json()
 

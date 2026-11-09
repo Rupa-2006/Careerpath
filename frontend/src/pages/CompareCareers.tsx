@@ -50,7 +50,7 @@ const ROWS: [string, (career: Career) => React.ReactNode][] = [
 /** Two careers side by side, so a student can see how the paths really differ before choosing one. */
 export function CompareCareers() {
   const [params, setParams] = useSearchParams()
-  const { slug: myPath, choose } = useMyPath()
+  const { slug: myPath, choose, fixed } = useMyPath()
   const a = params.get('a') ?? myPath
   const b = params.get('b') ?? ''
   const [all, setAll] = useState<RoadmapSummary[]>([])
@@ -142,7 +142,7 @@ export function CompareCareers() {
                     <td key={roadmap.slug} className="p-3">
                       {roadmap.slug === myPath
                         ? <span className="font-semibold text-teal">✓ This is my path</span>
-                        : <button type="button" className="btn btn-outline !min-h-9 !py-1 text-sm" onClick={() => choose(roadmap.slug)}>Make this my path</button>}
+                        : !fixed && <button type="button" className="btn btn-outline !min-h-9 !py-1 text-sm" onClick={() => choose(roadmap.slug)}>Make this my path</button>}
                     </td>
                   ))}
                 </tr>

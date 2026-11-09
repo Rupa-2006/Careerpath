@@ -25,9 +25,21 @@ def test_needs_login(client):
     assert client.put(URL, json=GOOD).status_code == 401
 
 
-def test_new_account_starts_empty(client, student):
+def test_new_account_starts_with_the_path_chosen_at_sign_up(client, student):
     body = client.get(URL).json()
-    assert body == {"path": "", "path_from": "", "steps": {}, "skills": [], "saved_at": None}
+    assert body["path"] == "web-developer" and body["steps"] == {} and body["skills"] == []
+    assert client.get("/api/v1/auth/me").json()["path"] == "web-developer"
+
+
+def test_sign_up_needs_a_real_career(client):
+    base = {"email": "new@example.com", "password": "Another-Strong-99"}
+    assert client.post("/api/v1/auth/register", json=base).status_code == 422
+    assert client.post("/api/v1/auth/register", json={**base, "path": "not-a-career"}).status_code == 422
+
+
+def test_the_path_stays_fixed(client, student):
+    saved = client.put(URL, json={**GOOD, "path": "doctor"}).json()
+    assert saved["path"] == "web-developer" and "12" in saved["steps"]
 
 
 def test_saves_and_returns_everything(client, student, db):
@@ -40,7 +52,6 @@ def test_saves_and_returns_everything(client, student, db):
 
 
 @pytest.mark.parametrize("bad", [
-    {**GOOD, "path": "not-a-career"},
     {**GOOD, "path": "Web Developer!"},
     {**GOOD, "steps": {"abc": {}}},
     {**GOOD, "steps": {"12": {"on": "yesterday"}}},
@@ -55,7 +66,7 @@ def test_refuses_bad_or_oversized_data(client, student, bad):
 def test_each_student_sees_only_their_own(client, student):
     client.put(URL, json=GOOD)
     client.post("/api/v1/auth/logout")
-    client.post("/api/v1/auth/register", json={"email": "ravi@example.com", "password": "Another-Strong-99"})
+    client.post("/api/v1/auth/register", json={"email": "ravi@example.com", "password": "Another-Strong-99", "path": "web-developer"})
     assert client.get(URL).json()["steps"] == {}
 
 

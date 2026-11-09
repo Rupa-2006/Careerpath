@@ -28,7 +28,7 @@ function Rule({ rule }: { rule: Criterion }) {
 export function CourseDetailPage() {
   const { slug = '' } = useParams()
   const { query } = useBackground()
-  const { slug: mine, choose } = useMyPath()
+  const { slug: mine, choose, fixed } = useMyPath()
   const [course, setCourse] = useState<CourseDetail | null>(null)
   const [error, setError] = useState('')
 
@@ -89,7 +89,7 @@ export function CourseDetailPage() {
         <p className="mt-6">
           {mine === course.roadmaps[0].slug
             ? <Link to="/my-path" className="btn btn-primary">Open My Path</Link>
-            : <button type="button" className="btn btn-primary" onClick={() => choose(course.roadmaps[0].slug, `area=${course.field_slug}&course=${course.slug}`)}>Make this my path</button>}
+            : !fixed && <button type="button" className="btn btn-primary" onClick={() => choose(course.roadmaps[0].slug, `area=${course.field_slug}&course=${course.slug}`)}>Make this my path</button>}
         </p>
       )}
       <div className="mt-4"><SourceLine record={course} /></div>

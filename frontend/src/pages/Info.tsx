@@ -1,5 +1,3 @@
-import { CareerNews } from '../components/CareerExtras'
-import { shortName, useFocus } from '../context/useMyCourse'
 import { useEffect, useState } from 'react'
 import { api, type ApiError, type Dates, type OpportunitySource, type Updates } from '../api/client'
 import { Notice } from '../components/Form'
@@ -51,28 +49,6 @@ export function DatesPage() {
 }
 
 export function UpdatesPage() {
-  const { focused, slug } = useFocus()
-  if (focused) return <FocusUpdates slug={slug} />
-  return <AllUpdates />
-}
-
-/** In focus mode: only what is changing in the student's own career. */
-function FocusUpdates({ slug }: { slug: string }) {
-  const [name, setName] = useState('')
-  useEffect(() => {
-    api.roadmap(slug, 'en').then((found) => setName(shortName(found.name))).catch(() => setName(''))
-  }, [slug])
-  return (
-    <>
-      <h1 className="text-3xl">What's changing{name ? ` for a ${name}` : ''}</h1>
-      <p className="mt-2 max-w-2xl text-muted">Only changes and news for your chosen career.</p>
-      <TechChanges roadmap={slug} title="What's changing, and what to learn" />
-      <CareerNews roadmap={slug} />
-    </>
-  )
-}
-
-function AllUpdates() {
   const { t, lang } = useLang()
   const [updates, setUpdates] = useState<Updates | null>(null)
   const [error, setError] = useState('')

@@ -45,6 +45,15 @@ export function setAccountSync(save: ((data: SavedProgress) => Promise<unknown>)
   if (!save) clearTimeout(timer)
 }
 
+// A logged-in student's career was chosen at sign-up and stays fixed.
+let fixedPath = ''
+
+/** Called by the login state with the account's career, or '' when logged out. */
+export function setFixedPath(path: string) {
+  fixedPath = path
+  window.dispatchEvent(new Event(CHANGED))
+}
+
 /** Lets every hook on the page re-read storage after the account's progress arrives. */
 function useOnProgressChange(reload: () => void) {
   useEffect(() => {
@@ -57,20 +66,22 @@ function useOnProgressChange(reload: () => void) {
 export function useMyPath() {
   const [slug, setSlug] = useState(() => read(PATH_KEY))
   const [from, setFrom] = useState(() => read(FROM_KEY))
+  const [fixed, setFixed] = useState(() => Boolean(fixedPath))
   useOnProgressChange(useCallback(() => {
     setSlug(read(PATH_KEY))
     setFrom(read(FROM_KEY))
+    setFixed(Boolean(fixedPath))
   }, []))
 
   const choose = useCallback((next: string, chosenFrom = '') => {
+    if (fixedPath) return   // an account's career can't be changed here
     setSlug(next)
     setFrom(chosenFrom)
     write(PATH_KEY, next)
     write(FROM_KEY, chosenFrom)
-    setExploring(false)
   }, [])
 
-  return { slug, from, choose }
+  return { slug, from, choose, fixed }
 }
 
 function savedSteps(): number[] {
@@ -259,49 +270,6 @@ export function clearLocalProgress() {
   setAccountSync(null)
   for (const key of ALL_KEYS) write(key, '')
   window.dispatchEvent(new Event(CHANGED))
-}
-
-// ---- Focus mode: once a career is chosen, the site shows only that path.
-// "Exploring" is a short visit to the rest of the site, remembered only until the tab closes.
-const EXPLORE_KEY = 'careerpath-exploring'
-const FOCUS_CHANGED = 'careerpath-focus-changed'
-
-function readExploring(): boolean {
-  try {
-    return sessionStorage.getItem(EXPLORE_KEY) === 'yes'
-  } catch {
-    return false
-  }
-}
-
-export function setExploring(on: boolean) {
-  try {
-    if (on) sessionStorage.setItem(EXPLORE_KEY, 'yes')
-    else sessionStorage.removeItem(EXPLORE_KEY)
-  } catch {
-    // Without storage, the switch still works until the page reloads.
-  }
-  window.dispatchEvent(new Event(FOCUS_CHANGED))
-}
-
-/** focused: show only the chosen path. exploring: a path is chosen, but the student is looking around. */
-export function useFocus() {
-  const { slug, from } = useMyPath()
-  const [exploring, setLocal] = useState(readExploring)
-  useEffect(() => {
-    const reload = () => setLocal(readExploring())
-    window.addEventListener(FOCUS_CHANGED, reload)
-    return () => window.removeEventListener(FOCUS_CHANGED, reload)
-  }, [])
-  return {
-    slug,
-    from,
-    course: new URLSearchParams(from).get('course') ?? '',
-    focused: Boolean(slug) && !exploring,
-    exploring: Boolean(slug) && exploring,
-    explore: () => setExploring(true),
-    back: () => setExploring(false),
-  }
 }
 
 /** "Doctor (MBBS)" reads better in a sentence as "Doctor". */

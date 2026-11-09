@@ -1,5 +1,6 @@
 export type User = {
   id: string
+  path: string   // the career chosen at sign-up; fixed
   email: string
   name: string | null
   role: 'student' | 'admin'
@@ -228,8 +229,8 @@ export const api = {
   me: () => request<User>('/auth/me'),
   savedProgress: () => request<SavedProgress>('/me/saved-progress'),
   saveProgress: (data: SavedProgress) => request<SavedProgress>('/me/saved-progress', 'PUT', data),
-  register: (email: string, password: string, name: string) =>
-    request<User>('/auth/register', 'POST', { email, password, name }),
+  register: (email: string, password: string, name: string, path: string) =>
+    request<User>('/auth/register', 'POST', { email, password, name, path }),
   login: (email: string, password: string) => request<User>('/auth/login', 'POST', { email, password }),
   logout: () => request<void>('/auth/logout', 'POST'),
   updateProfile: (changes: Partial<Pick<User, 'name' | 'region_id' | 'stream_id'>>) =>

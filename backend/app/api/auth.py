@@ -19,7 +19,7 @@ from app.core.security import (
     record_event,
     verify_password,
 )
-from app.models import User, UserSession
+from app.models import Roadmap, User, UserSession
 from app.schemas import LoginIn, RegisterIn, UserOut
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -63,7 +63,13 @@ def register(data: RegisterIn, request: Request, response: Response, db: Db) -> 
     if problem:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, problem)
 
-    user = User(email=email, password_hash=hash_password(data.password), name=data.name)
+    if db.scalar(select(Roadmap.id).where(Roadmap.slug == data.path)) is None:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Please choose your career path.")
+
+    user = User(
+        email=email, password_hash=hash_password(data.password), name=data.name,
+        saved_progress={"path": data.path, "path_from": "", "steps": {}, "skills": []}, saved_progress_at=datetime.now(UTC),
+    )
     db.add(user)
     try:
         db.commit()

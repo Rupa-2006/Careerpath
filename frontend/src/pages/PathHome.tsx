@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { api, type ApiError, type RoadmapDetail } from '../api/client'
 import { AfterRoadmap, CareerNews } from '../components/CareerExtras'
 import { Notice } from '../components/Form'
 import { TechChanges } from '../components/TechChanges'
 import { useAuth } from '../context/AuthContext'
-import { shortName, useDoneSteps, useFocus } from '../context/useMyCourse'
+import { shortName, useDoneSteps, useMyPath } from '../context/useMyCourse'
 
-/** The home page once a career is chosen: only that path, its next steps, what's changing and where it leads. */
-export function FocusHome() {
-  const { slug, course, explore } = useFocus()
-  const { done } = useDoneSteps()
+/** A logged-in student's home: the career they chose at sign-up, their next steps, what's changing and where it leads. */
+export function PathHome() {
   const { user } = useAuth()
-  const navigate = useNavigate()
+  const { slug, from } = useMyPath()
+  const course = new URLSearchParams(from).get('course') ?? ''
+  const { done } = useDoneSteps()
   const [roadmap, setRoadmap] = useState<RoadmapDetail | null>(null)
   const [courseName, setCourseName] = useState('')
   const [error, setError] = useState('')
 
   useEffect(() => {
-    api.roadmap(slug, 'en').then(setRoadmap).catch((problem: ApiError) => setError(problem.message))
+    if (slug) api.roadmap(slug, 'en').then(setRoadmap).catch((problem: ApiError) => setError(problem.message))
   }, [slug])
 
   useEffect(() => {
@@ -35,15 +35,10 @@ export function FocusHome() {
   const year = next[0]?.year
   const career = shortName(roadmap.name)
 
-  function leave() {
-    explore()
-    navigate('/choose')
-  }
-
   return (
     <>
       <section className="rounded-2xl bg-pine px-6 py-8 text-white md:px-10">
-        <p className="text-sm font-semibold uppercase tracking-wide text-sun">🎯 Your path</p>
+        <p className="text-sm font-semibold uppercase tracking-wide text-sun">🎯 {user?.name ? `${user.name.split(' ')[0]}'s path` : 'Your path'}</p>
         <h1 className="mt-1 text-3xl text-white md:text-4xl">{roadmap.name}</h1>
         {courseName && <p className="mt-1 text-white/85">Through {courseName}</p>}
         <div className="mt-5 max-w-xl">
@@ -58,8 +53,7 @@ export function FocusHome() {
           <Link to={`/roadmaps/${roadmap.slug}`} className="btn btn-sun">Open my roadmap</Link>
           <Link to="/my-path" className="btn border-2 border-white/60 text-white hover:bg-white/10">My progress</Link>
         </div>
-        {!user && <p className="mt-4 text-sm text-white/85">💾 Saved on this device only. <Link to="/login" className="text-sun">Log in</Link> to keep it on every device.</p>}
-      </section>
+              </section>
 
       {next.length > 0 && (
         <section className="mt-8">
@@ -101,7 +95,7 @@ export function FocusHome() {
       </section>
 
       <p className="mt-10 border-t border-line pt-4 text-center text-sm text-muted">
-        Want to look at other careers? <button type="button" className="cursor-pointer font-semibold text-teal underline" onClick={leave}>Explore other careers</button>
+        Want to look around? <Link to="/choose" className="font-semibold">Explore other careers</Link>
       </p>
     </>
   )

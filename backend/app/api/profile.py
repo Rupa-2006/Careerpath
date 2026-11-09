@@ -61,7 +61,10 @@ def get_saved_progress(user: CurrentUser) -> SavedProgressOut:
 @router.put("/saved-progress", response_model=SavedProgressOut)
 def put_saved_progress(data: SavedProgress, user: CurrentUser, db: Db) -> SavedProgressOut:
     """The browser sends the whole, already merged state. Unknown fields and oversized data are refused."""
-    if data.path and db.scalar(select(Roadmap.id).where(Roadmap.slug == data.path)) is None:
+    fixed = (user.saved_progress or {}).get("path")
+    if fixed:   # chosen at sign-up and fixed: progress can be saved, but the career itself stays
+        data.path, data.path_from = fixed, (user.saved_progress or {}).get("path_from", "") or data.path_from
+    elif data.path and db.scalar(select(Roadmap.id).where(Roadmap.slug == data.path)) is None:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Unknown career.")
     user.saved_progress = data.model_dump(exclude_none=True)
     user.saved_progress_at = datetime.now(UTC)

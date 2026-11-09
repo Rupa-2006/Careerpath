@@ -98,6 +98,11 @@ class User(Timestamped, Base):
     # My Path: chosen career, finished steps with dates and notes, and skills. Deleted with the account.
     saved_progress: Mapped[dict | None] = mapped_column(JSONB)
     saved_progress_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    @property
+    def path(self) -> str:
+        """The career chosen at sign-up. It stays fixed for the account."""
+        return (self.saved_progress or {}).get("path", "")
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=lambda: datetime.now(UTC)
     )

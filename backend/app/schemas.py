@@ -461,6 +461,7 @@ class UserOut(OrmModel):
     role: str
     region_id: int | None
     stream_id: int | None
+    path: str = ""   # the career chosen at sign-up; it stays fixed
 
 
 class SavedStep(BaseModel):
@@ -501,6 +502,7 @@ class RegisterIn(BaseModel):
     email: EmailStr
     password: str = Field(max_length=1000)
     name: str | None = Field(default=None, max_length=100)
+    path: str = Field(min_length=1, max_length=80, pattern=r"^[a-z0-9-]+$")   # the career, chosen once at sign-up
 
     @field_validator("name")
     @classmethod

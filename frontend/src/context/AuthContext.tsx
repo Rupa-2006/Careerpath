@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { api, type User } from '../api/client'
-import { clearLocalProgress, joinAccount, setAccountSync } from './useMyCourse'
+import { clearLocalProgress, joinAccount, setAccountSync, setFixedPath } from './useMyCourse'
 
 type Auth = {
   user: User | null
@@ -21,6 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // A logged-in student's My Path follows them: join this device's progress with the account, then keep saving.
   useEffect(() => {
+    setFixedPath(user?.path ?? '')
     if (!user) {
       setAccountSync(null)
       return

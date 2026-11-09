@@ -61,27 +61,27 @@ def test_session_token_is_stored_hashed(client, student, db):
     assert db.scalar(select(func.count()).select_from(UserSession).where(UserSession.token_hash == token)) == 0
 
 
-def test_cookie_is_protected(client):
-    response = client.post(f"{API}/auth/register", json={"email": "b@example.com", "password": PASSWORD})
+def test_cookie_is_protected(career, client):
+    response = client.post(f"{API}/auth/register", json={"email": "b@example.com", "password": PASSWORD, "path": "web-developer"})
     cookie = response.headers["set-cookie"].lower()
     assert "httponly" in cookie and "samesite=lax" in cookie
 
 
-def test_email_is_case_insensitive(client, student):
+def test_email_is_case_insensitive(career, client, student):
     client.post(f"{API}/auth/logout")
     assert login(client, "ASHA@Example.com").status_code == 200
-    duplicate = client.post(f"{API}/auth/register", json={"email": "Asha@example.com", "password": PASSWORD})
+    duplicate = client.post(f"{API}/auth/register", json={"email": "Asha@example.com", "password": PASSWORD, "path": "web-developer"})
     assert duplicate.status_code == 409
 
 
 @pytest.mark.parametrize("password", ["short", "1234567890123", "password123", "asha-is-great-1"])
-def test_weak_passwords_are_refused(client, password):
-    response = client.post(f"{API}/auth/register", json={"email": "asha@example.com", "password": password})
+def test_weak_passwords_are_refused(career, client, password):
+    response = client.post(f"{API}/auth/register", json={"email": "asha@example.com", "password": password, "path": "web-developer"})
     assert response.status_code == 422
 
 
-def test_invalid_email_is_refused(client):
-    assert client.post(f"{API}/auth/register", json={"email": "nope", "password": PASSWORD}).status_code == 422
+def test_invalid_email_is_refused(career, client):
+    assert client.post(f"{API}/auth/register", json={"email": "nope", "password": PASSWORD, "path": "web-developer"}).status_code == 422
 
 
 def test_wrong_password_and_unknown_email_look_the_same(client, student):
@@ -119,11 +119,11 @@ def test_login_locks_after_five_wrong_passwords(client, student):
     assert login(client).status_code == 429
 
 
-def test_lock_only_affects_that_email(client, student):
+def test_lock_only_affects_that_email(career, client, student):
     client.post(f"{API}/auth/logout")
     for _ in range(5):
         login(client, password="Wrong-Password-99")
-    client.post(f"{API}/auth/register", json={"email": "ravi@example.com", "password": PASSWORD})
+    client.post(f"{API}/auth/register", json={"email": "ravi@example.com", "password": PASSWORD, "path": "web-developer"})
     client.post(f"{API}/auth/logout")
     assert login(client, "ravi@example.com").status_code == 200
 
@@ -139,9 +139,9 @@ def test_good_login_resets_the_count(client, student):
     assert login(client).status_code == 200
 
 
-def test_too_many_signups_from_one_place_are_refused(client):
+def test_too_many_signups_from_one_place_are_refused(career, client):
     codes = [
-        client.post(f"{API}/auth/register", json={"email": f"s{i}@example.com", "password": PASSWORD}).status_code
+        client.post(f"{API}/auth/register", json={"email": f"s{i}@example.com", "password": PASSWORD, "path": "web-developer"}).status_code
         for i in range(11)
     ]
     assert codes[:10] == [201] * 10 and codes[10] == 429
@@ -239,9 +239,9 @@ def test_delete_account_removes_everything(client, student, db):
 # ---------- Admin ----------
 
 @pytest.mark.parametrize("path", ["/admin/summary", "/admin/users"])
-def test_admin_pages_refuse_strangers_and_students(client, path):
+def test_admin_pages_refuse_strangers_and_students(career, client, path):
     assert client.get(API + path).status_code == 401
-    client.post(f"{API}/auth/register", json={"email": "asha@example.com", "password": PASSWORD})
+    client.post(f"{API}/auth/register", json={"email": "asha@example.com", "password": PASSWORD, "path": "web-developer"})
     assert client.get(API + path).status_code == 403
 
 

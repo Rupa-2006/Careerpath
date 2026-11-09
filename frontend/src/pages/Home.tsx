@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { useFocus, useMyPath } from '../context/useMyCourse'
-import { FocusHome } from './FocusHome'
+import { useMyPath } from '../context/useMyCourse'
+import { PathHome } from './PathHome'
 import { AreaGrid } from './Choose'
 
 const JOURNEY = [
@@ -55,8 +55,9 @@ function TwoWays() {
 }
 
 export function Home() {
-  const { focused } = useFocus()
-  if (focused) return <FocusHome />
+  const { user } = useAuth()
+  // A logged-in student goes straight to the details of the path they chose at sign-up
+  if (user?.path) return <PathHome />
   return (
     <>
       <section className="relative overflow-hidden rounded-2xl bg-pine px-6 py-10 text-white md:px-12 md:py-14">

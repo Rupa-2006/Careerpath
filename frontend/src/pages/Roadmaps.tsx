@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api, type ApiError, type CourseDetail, type RoadmapDetail, type RoadmapStep } from '../api/client'
 import { AfterRoadmap, CareerLadder, CareerNews, EmptyChanges } from '../components/CareerExtras'
 import { CareerPicker } from '../components/CareerPicker'
@@ -9,11 +9,9 @@ import { TechChanges } from '../components/TechChanges'
 import { SourceLine } from '../components/Trust'
 import { useAuth } from '../context/AuthContext'
 import { useLang } from '../context/Language'
-import { useDoneSteps, useFocus, useMyPath } from '../context/useMyCourse'
+import { useDoneSteps, useMyPath } from '../context/useMyCourse'
 
 export function Roadmaps() {
-  const { focused, slug } = useFocus()
-  if (focused) return <Navigate to={`/roadmaps/${slug}`} replace />
   return (
     <>
       <h1 className="text-3xl">Career paths</h1>
@@ -58,7 +56,7 @@ export function RoadmapPage() {
   const { slug = '' } = useParams()
   const { t, lang } = useLang()
   const { user } = useAuth()
-  const { slug: mine, choose } = useMyPath()
+  const { slug: mine, choose, fixed } = useMyPath()
   const { done, toggle: toggleLocal } = useDoneSteps()
   const [params] = useSearchParams()
   const [roadmap, setRoadmap] = useState<RoadmapDetail | null>(null)
@@ -131,7 +129,7 @@ export function RoadmapPage() {
       <div className="mt-3 flex flex-wrap items-center gap-3">
         {mine === roadmap.slug
           ? <Link to="/my-path" className="btn btn-outline">Open My Path</Link>
-          : <button type="button" className="btn btn-primary" onClick={() => choose(roadmap.slug, area && courseSlug ? `area=${area}&course=${courseSlug}` : '')}>Make this my path</button>}
+          : !fixed && <button type="button" className="btn btn-primary" onClick={() => choose(roadmap.slug, area && courseSlug ? `area=${area}&course=${courseSlug}` : '')}>Make this my path</button>}
         <Link to={`/compare-careers?a=${roadmap.slug}`} className="btn btn-outline">Compare with another career</Link>
         <span className="text-sm text-muted">{doneCount} of {roadmap.step_count} steps done</span>
       </div>
