@@ -7,6 +7,14 @@ export type User = {
   stream_id: number | null
 }
 
+/** My Path progress kept with an account. Steps are keyed by step id. */
+export type SavedProgress = {
+  path: string
+  path_from: string
+  steps: Record<string, { on?: string; note?: string }>
+  skills: string[]
+  saved_at?: string | null
+}
 export type Region = { id: number; code: string; name: string; kind: 'state' | 'union_territory' }
 export type Stream = { id: number; slug: string; name: string; aliases: string[]; subjects: { id: number; name: string }[] }
 
@@ -218,6 +226,8 @@ async function request<T>(path: string, method = 'GET', body?: unknown): Promise
 
 export const api = {
   me: () => request<User>('/auth/me'),
+  savedProgress: () => request<SavedProgress>('/me/saved-progress'),
+  saveProgress: (data: SavedProgress) => request<SavedProgress>('/me/saved-progress', 'PUT', data),
   register: (email: string, password: string, name: string) =>
     request<User>('/auth/register', 'POST', { email, password, name }),
   login: (email: string, password: string) => request<User>('/auth/login', 'POST', { email, password }),

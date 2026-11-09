@@ -316,3 +316,12 @@ Commentary:
 - [Compliance timeline, MirvoLegal](https://www.mirvolegal.com/insights/dpdp-rules-2025-compliance-timeline/)
 - [Ed-tech and child data, LiveLaw](https://www.livelaw.in/articles/dpdp-child-data-rules-demand-edtech-platforms-555317)
 - [Report on the proposed shorter timeline, Business Standard](https://www.business-standard.com/technology/tech-news/meity-may-cut-compliance-timeline-for-key-dpdp-rules-to-12-months-126012201293_1.html)
+
+## Update, 9 November 2026: student accounts are back
+
+The owner chose to let **everyone** sign up, with no age question, so students can keep their My Path progress on every device.
+
+- What an account now keeps: email, password hash, optional name, and My Path progress (chosen career, finished steps with dates, short notes, skills). Deleting the account deletes all of it.
+- Logging out clears the progress from that device, so the next person on a shared computer can't see it.
+- Students can still use everything without an account; progress then stays only on their device.
+- **Review this before about 13 May 2027.** From then, India's data law is expected to need verifiable parent consent before keeping any personal data of a student under 18 (sections 1 and 2 above). Many users will be 17. Talk to a lawyer before then about an age question and a parent consent step.

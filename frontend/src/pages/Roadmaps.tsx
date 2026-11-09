@@ -91,22 +91,23 @@ export function RoadmapPage() {
 
 
   async function toggle(step: RoadmapStep) {
-    if (!user) {
-      toggleLocal(step.id)
-      return
+    // Older accounts may have a step marked on the server: clear it there. Everything else lives in My Path progress.
+    if (user && step.done) {
+      try {
+        await api.unmarkStep(step.id)
+        load()
+      } catch (problem) {
+        setError((problem as ApiError).message)
+      }
+      if (!done.includes(step.id)) return
     }
-    try {
-      await (step.done ? api.unmarkStep(step.id) : api.markStep(step.id))
-      load()
-    } catch (problem) {
-      setError((problem as ApiError).message)
-    }
+    toggleLocal(step.id)
   }
 
   if (error) return <Notice kind="error">{error}</Notice>
   if (!roadmap) return <p className="py-10 text-center text-muted">{t('loading')}</p>
 
-  const isDone = (step: RoadmapStep) => step.done || (!user && done.includes(step.id))
+  const isDone = (step: RoadmapStep) => step.done || done.includes(step.id)
   const doneCount = roadmap.steps.filter(isDone).length
   const nextStep = roadmap.steps.find((step) => !isDone(step))
   const focusYear = Number(params.get('year')) || (nextStep ? Math.min(nextStep.year, chosen?.path_years ?? nextStep.year) : undefined)

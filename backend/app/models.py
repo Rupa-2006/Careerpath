@@ -95,6 +95,9 @@ class User(Timestamped, Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
     region_id: Mapped[int | None] = mapped_column(ForeignKey("regions.id", ondelete="SET NULL"))
     stream_id: Mapped[int | None] = mapped_column(ForeignKey("streams.id", ondelete="SET NULL"))
+    # My Path: chosen career, finished steps with dates and notes, and skills. Deleted with the account.
+    saved_progress: Mapped[dict | None] = mapped_column(JSONB)
+    saved_progress_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=lambda: datetime.now(UTC)
     )

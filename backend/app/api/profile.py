@@ -1,12 +1,13 @@
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Cookie, HTTPException, Response, status
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 
 from app.api.deps import CurrentUser, Db
 from app.core.security import SESSION_COOKIE, hash_password, hash_token, password_problem, verify_password
-from app.models import Region, Stream, UserSession
-from app.schemas import DeleteAccountIn, PasswordChangeIn, ProfileIn, UserOut
+from app.models import Region, Roadmap, Stream, UserSession
+from app.schemas import DeleteAccountIn, PasswordChangeIn, ProfileIn, SavedProgress, SavedProgressOut, UserOut
 
 router = APIRouter(prefix="/me", tags=["profile"])
 
@@ -49,3 +50,20 @@ def delete_account(data: DeleteAccountIn, response: Response, user: CurrentUser,
     db.delete(user)
     db.commit()
     response.delete_cookie(SESSION_COOKIE, path="/")
+
+
+@router.get("/saved-progress", response_model=SavedProgressOut)
+def get_saved_progress(user: CurrentUser) -> SavedProgressOut:
+    """My Path progress kept with the account, so it follows the student to any device."""
+    return SavedProgressOut(**(user.saved_progress or {}), saved_at=user.saved_progress_at)
+
+
+@router.put("/saved-progress", response_model=SavedProgressOut)
+def put_saved_progress(data: SavedProgress, user: CurrentUser, db: Db) -> SavedProgressOut:
+    """The browser sends the whole, already merged state. Unknown fields and oversized data are refused."""
+    if data.path and db.scalar(select(Roadmap.id).where(Roadmap.slug == data.path)) is None:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Unknown career.")
+    user.saved_progress = data.model_dump(exclude_none=True)
+    user.saved_progress_at = datetime.now(UTC)
+    db.commit()
+    return SavedProgressOut(**user.saved_progress, saved_at=user.saved_progress_at)

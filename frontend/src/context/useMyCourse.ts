@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import type { SavedProgress } from '../api/client'
 
 const PATH_KEY = 'careerpath-my-path'
 const FROM_KEY = 'careerpath-my-path-from'
@@ -19,12 +20,47 @@ function write(key: string, value: string) {
   } catch {
     // Private browsing can block storage. The choice still works until the page closes.
   }
+  schedulePush()
+}
+
+// ---- Keeping a logged-in student's progress in their account.
+// The browser stays the working copy, so every page works the same with or without login.
+const CHANGED = 'careerpath-progress-changed'
+let push: ((data: SavedProgress) => Promise<unknown>) | null = null
+let timer: ReturnType<typeof setTimeout> | undefined
+
+function schedulePush() {
+  if (!push) return
+  clearTimeout(timer)
+  timer = setTimeout(() => {
+    push?.(collectLocal()).catch(() => {
+      // Offline or a server problem: the next change tries again, and nothing is lost on this device.
+    })
+  }, 800)
+}
+
+/** Called by the login state: a function to save to the account, or null when logged out. */
+export function setAccountSync(save: ((data: SavedProgress) => Promise<unknown>) | null) {
+  push = save
+  if (!save) clearTimeout(timer)
+}
+
+/** Lets every hook on the page re-read storage after the account's progress arrives. */
+function useOnProgressChange(reload: () => void) {
+  useEffect(() => {
+    window.addEventListener(CHANGED, reload)
+    return () => window.removeEventListener(CHANGED, reload)
+  }, [reload])
 }
 
 /** The chosen career stays in this browser, so a student needs no account and shares no personal details. */
 export function useMyPath() {
   const [slug, setSlug] = useState(() => read(PATH_KEY))
   const [from, setFrom] = useState(() => read(FROM_KEY))
+  useOnProgressChange(useCallback(() => {
+    setSlug(read(PATH_KEY))
+    setFrom(read(FROM_KEY))
+  }, []))
 
   const choose = useCallback((next: string, chosenFrom = '') => {
     setSlug(next)
@@ -48,6 +84,7 @@ function savedSteps(): number[] {
 /** Finished roadmap steps for students without an account. */
 export function useDoneSteps() {
   const [done, setDone] = useState<number[]>(savedSteps)
+  useOnProgressChange(useCallback(() => setDone(savedSteps()), []))
 
   const toggle = useCallback((id: number) => {
     setDone((current) => {
@@ -96,6 +133,7 @@ export function logStep(id: number, finished: boolean) {
 /** A short note on what the student made for a step: their proof of work. */
 export function useStepNotes() {
   const [notes, setNotes] = useState<Record<string, string>>(() => readObject(NOTES_KEY))
+  useOnProgressChange(useCallback(() => setNotes(readObject(NOTES_KEY)), []))
   const save = useCallback((id: number, text: string) => {
     setNotes((current) => {
       const next = { ...current }
@@ -120,6 +158,7 @@ function savedSkills(): string[] {
 /** Skills the student says they can already do. Shared by the Skills page, the skill gap and the tracker. */
 export function useMySkills() {
   const [have, setHave] = useState<string[]>(savedSkills)
+  useOnProgressChange(useCallback(() => setHave(savedSkills()), []))
   const toggle = useCallback((slug: string) => {
     setHave((current) => {
       const next = current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug]
@@ -153,4 +192,70 @@ export function importProgress(text: string): boolean {
   } catch {
     return false
   }
+}
+
+// ---- Moving progress between this device and an account
+
+export function collectLocal(): SavedProgress {
+  const log = readStepLog()
+  const notes = readObject(NOTES_KEY)
+  const steps: SavedProgress['steps'] = {}
+  for (const id of savedSteps()) {
+    const entry: { on?: string; note?: string } = {}
+    if (log[id]) entry.on = log[id]
+    if (notes[id]) entry.note = notes[id]
+    steps[String(id)] = entry
+  }
+  return { path: read(PATH_KEY), path_from: read(FROM_KEY), steps, skills: savedSkills() }
+}
+
+function applyLocal(data: SavedProgress) {
+  const ids = Object.keys(data.steps).map(Number).filter(Number.isFinite)
+  const log: Record<string, string> = {}
+  const notes: Record<string, string> = {}
+  for (const [id, entry] of Object.entries(data.steps)) {
+    if (entry.on) log[id] = entry.on
+    if (entry.note) notes[id] = entry.note
+  }
+  const saving = push
+  push = null   // writing the account's own data back here must not send it straight back
+  write(PATH_KEY, data.path)
+  write(FROM_KEY, data.path_from)
+  write(STEPS_KEY, ids.length ? JSON.stringify(ids) : '')
+  write(LOG_KEY, Object.keys(log).length ? JSON.stringify(log) : '')
+  write(NOTES_KEY, Object.keys(notes).length ? JSON.stringify(notes) : '')
+  write(SKILLS_KEY, data.skills.length ? JSON.stringify(data.skills) : '')
+  push = saving
+  window.dispatchEvent(new Event(CHANGED))
+}
+
+/** Account and device together: nothing ticked on either side is lost. The account's chosen career wins. */
+export function mergeProgress(account: SavedProgress, device: SavedProgress): SavedProgress {
+  const steps: SavedProgress['steps'] = { ...device.steps }
+  for (const [id, entry] of Object.entries(account.steps)) {
+    const local = steps[id] ?? {}
+    const on = [entry.on, local.on].filter(Boolean).sort()[0]
+    const note = entry.note || local.note
+    steps[id] = { ...(on ? { on } : {}), ...(note ? { note } : {}) }
+  }
+  return {
+    path: account.path || device.path,
+    path_from: account.path ? account.path_from : device.path_from,
+    steps,
+    skills: [...new Set([...account.skills, ...device.skills])].sort(),
+  }
+}
+
+/** After login: combine both copies, then keep the result here and in the account. */
+export async function joinAccount(load: () => Promise<SavedProgress>, save: (data: SavedProgress) => Promise<unknown>) {
+  const merged = mergeProgress(await load(), collectLocal())
+  applyLocal(merged)
+  await save(merged)
+}
+
+/** After logout the next person on this computer must not see the student's progress. */
+export function clearLocalProgress() {
+  setAccountSync(null)
+  for (const key of ALL_KEYS) write(key, '')
+  window.dispatchEvent(new Event(CHANGED))
 }

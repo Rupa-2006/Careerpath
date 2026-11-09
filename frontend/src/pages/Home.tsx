@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { useMyPath } from '../context/useMyCourse'
 import { AreaGrid } from './Choose'
 
 const JOURNEY = [
@@ -7,6 +9,49 @@ const JOURNEY = [
   ['Keep up with change', 'See what is changing in your field, and what to learn because of it.'],
   ['Reach your opportunity', 'See the jobs, study and other options at the end of your path.'],
 ]
+
+/** The two ways to use the site: look around freely, or follow and save your own path. */
+function TwoWays() {
+  const { user } = useAuth()
+  const { slug } = useMyPath()
+  const name = user?.name?.split(' ')[0]
+  return (
+    <section className="mt-6 grid gap-4 md:grid-cols-2" aria-label="Two ways to use CareerPath">
+      <div className="card flex flex-col border-t-4 border-t-teal">
+        <p className="text-3xl" aria-hidden="true">🧭</p>
+        <h2 className="mt-2 text-2xl">Explore careers</h2>
+        <p className="mt-1 text-muted">Look at every area, course, career and roadmap. No login needed.</p>
+        <div className="mt-auto pt-4">
+          <a href="#careers" className="btn btn-primary">Start exploring ↓</a>
+        </div>
+      </div>
+      <div className="card flex flex-col border-t-4 border-t-sun">
+        <p className="text-3xl" aria-hidden="true">🎯</p>
+        <h2 className="mt-2 text-2xl">My Path</h2>
+        {user ? (
+          <>
+            <p className="mt-1 text-muted">
+              {name ? `Welcome back, ${name}. ` : 'Welcome back. '}
+              {slug ? 'Your progress is saved to your account, on every device.' : 'Choose your career, and your progress will be saved to your account.'}
+            </p>
+            <div className="mt-auto pt-4">
+              <Link to="/my-path" className="btn btn-primary">{slug ? 'Continue my path →' : 'Choose my career →'}</Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="mt-1 text-muted">Follow your chosen career step by step. Log in to save your progress and see it on any phone or computer.</p>
+            <div className="mt-auto flex flex-wrap items-center gap-2 pt-4">
+              <Link to="/login" className="btn btn-primary">Log in</Link>
+              <Link to="/register" className="btn btn-outline">Sign up free</Link>
+              <Link to="/my-path" className="text-sm">or continue without login</Link>
+            </div>
+          </>
+        )}
+      </div>
+    </section>
+  )
+}
 
 export function Home() {
   return (
@@ -23,7 +68,9 @@ export function Home() {
         </div>
       </section>
 
-      <ol className="mt-5 flex flex-wrap items-center gap-2 text-sm font-semibold text-pine" aria-label="How it works">
+      <TwoWays />
+
+      <ol className="mt-6 flex flex-wrap items-center gap-2 text-sm font-semibold text-pine" aria-label="How it works">
         {JOURNEY.map(([title], index) => (
           <li key={title} className="flex items-center gap-2">
             {index > 0 && <span aria-hidden="true" className="text-muted">→</span>}

@@ -28,7 +28,7 @@ function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   const [busy, setBusy] = useState(false)
   const isLogin = mode === 'login'
 
-  if (user) return <Navigate to="/" replace />
+  if (user) return <Navigate to="/my-path" replace />
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -37,7 +37,7 @@ function AuthPage({ mode }: { mode: 'login' | 'register' }) {
     try {
       setUser(isLogin ? await api.login(email, password) : await api.register(email, password, name))
       await savePendingQuiz()
-      navigate('/explore')
+      navigate('/my-path')
     } catch (problem) {
       setError((problem as ApiError).message)
       setBusy(false)
@@ -46,7 +46,12 @@ function AuthPage({ mode }: { mode: 'login' | 'register' }) {
 
   return (
     <div className="card mx-auto mt-6 max-w-md">
-      <h1 className="mb-4 text-2xl">{isLogin ? 'Log in' : 'Create your account'}</h1>
+      <h1 className="text-2xl">{isLogin ? 'Log in to My Path' : 'Create your free account'}</h1>
+      <p className="mb-4 mt-1 text-sm text-muted">
+        {isLogin
+          ? 'Your chosen career, finished steps, notes and skills will appear here.'
+          : 'Save your path and progress, and see them on any phone or computer. Anything you already ticked on this device moves into your account.'}
+      </p>
       <Notice kind="error">{error}</Notice>
       <form onSubmit={submit}>
         {!isLogin && (

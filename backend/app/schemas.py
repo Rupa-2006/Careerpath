@@ -463,6 +463,40 @@ class UserOut(OrmModel):
     stream_id: int | None
 
 
+class SavedStep(BaseModel):
+    on: str | None = Field(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$")   # the day it was finished
+    note: str | None = Field(default=None, max_length=300)                    # what the student made
+
+
+class SavedProgress(BaseModel):
+    """Everything My Path keeps. Sizes are capped so an account can't be used to store anything else."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    path: str = Field(default="", max_length=80, pattern=r"^[a-z0-9-]*$")
+    path_from: str = Field(default="", max_length=200)
+    steps: dict[str, SavedStep] = Field(default_factory=dict)
+    skills: list[str] = Field(default_factory=list, max_length=500)
+
+    @field_validator("steps")
+    @classmethod
+    def check_steps(cls, value: dict[str, SavedStep]) -> dict[str, SavedStep]:
+        if len(value) > 2000 or any(not key.isdigit() or len(key) > 9 for key in value):
+            raise ValueError("Steps must be step numbers.")
+        return value
+
+    @field_validator("skills")
+    @classmethod
+    def check_skills(cls, value: list[str]) -> list[str]:
+        if any(len(item) > 80 or not item.replace("-", "").isalnum() for item in value):
+            raise ValueError("Skills must be skill names.")
+        return sorted(set(value))
+
+
+class SavedProgressOut(SavedProgress):
+    saved_at: datetime | None = None
+
+
 class RegisterIn(BaseModel):
     email: EmailStr
     password: str = Field(max_length=1000)

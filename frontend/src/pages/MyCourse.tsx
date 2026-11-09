@@ -6,7 +6,21 @@ import { Notice } from '../components/Form'
 import { ProgressTracker } from '../components/ProgressTracker'
 import { SkillGap } from '../components/SkillGap'
 import { TechChanges } from '../components/TechChanges'
+import { useAuth } from '../context/AuthContext'
 import { useDoneSteps, useMyPath, useMySkills } from '../context/useMyCourse'
+
+function SaveBanner() {
+  const { user, loading } = useAuth()
+  if (user || loading) return null
+  return (
+    <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg bg-[#fff7e6] p-3 text-sm print:hidden">
+      <span>💾 Your progress is saved only on this device.</span>
+      <Link to="/login" className="font-semibold">Log in</Link>
+      <Link to="/register" className="font-semibold">Sign up free</Link>
+      <span className="text-muted">to keep it on every device.</span>
+    </p>
+  )
+}
 
 export function MyPath() {
   const { slug, from, choose } = useMyPath()
@@ -27,7 +41,8 @@ export function MyPath() {
     return (
       <>
         <h1 className="text-3xl">My Path</h1>
-        <p className="mt-2 max-w-2xl">Choose a career to start. You don't need an account, and your choice stays in this browser.</p>
+        <p className="mt-2 max-w-2xl">Choose a career to start. You can use My Path without an account, or log in to keep your progress on every device.</p>
+        <SaveBanner />
         <div className="mt-4"><CareerPicker /></div>
       </>
     )
@@ -44,6 +59,7 @@ export function MyPath() {
       <p className="text-sm text-muted">My Path</p>
       <h1 className="text-3xl">{roadmap.name}</h1>
       <p className="mt-2">{roadmap.description}</p>
+      <SaveBanner />
 
       <p className="mt-3 font-semibold">{finished.length} of {roadmap.steps.length} steps done ({percent}%)</p>
       <progress max={100} value={percent} className="mt-1 h-3 w-full accent-teal" aria-label="Path progress" />
