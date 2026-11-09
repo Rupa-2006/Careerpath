@@ -176,3 +176,9 @@ SKILLS = [
      "స్నేహితుడితో మాక్ ఇంటర్వ్యూ చేసి, ఒక ప్రాజెక్ట్‌ను 2 నిమిషాల్లో వివరించండి.",
      "skill", [("National Career Service", "https://www.ncs.gov.in/")], []),
 ]
+
+
+# More career-specific skills, added on 9 November 2026
+from scripts.skills_more import MORE_SKILLS  # noqa: E402
+
+SKILLS += MORE_SKILLS
