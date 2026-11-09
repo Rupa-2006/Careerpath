@@ -6,6 +6,7 @@ import { Notice } from '../components/Form'
 import { EligibilityBadge, SourceLine, TrustBadge } from '../components/Trust'
 import { useLang } from '../context/Language'
 import { useBackground } from '../context/useBackground'
+import { shortName, useFocus } from '../context/useMyCourse'
 
 type Turn = { id: number; question: string; reply: AssistantReply | null }
 
@@ -30,6 +31,11 @@ function Card({ card }: { card: AssistantCard }) {
 
 export function Assistant() {
   const { t, lang } = useLang()
+  const { focused, slug } = useFocus()
+  const [career, setCareer] = useState('')
+  useEffect(() => {
+    if (focused && slug) api.roadmap(slug, 'en').then((found) => setCareer(shortName(found.name))).catch(() => setCareer(''))
+  }, [focused, slug])
   const state = useBackground()
   const { background } = state
   const [turns, setTurns] = useState<Turn[]>([])
@@ -66,7 +72,9 @@ export function Assistant() {
   }
 
   const last = turns.at(-1)?.reply
-  const suggestions = last ? last.next_questions : STARTERS
+  const suggestions = last ? last.next_questions : career
+    ? [`What should I learn next to become a ${career}?`, `Which skills does a ${career} need?`, `What jobs can a ${career} get?`]
+    : STARTERS
 
   return (
     <div className="mx-auto max-w-3xl">

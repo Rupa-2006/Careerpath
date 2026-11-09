@@ -67,6 +67,7 @@ export function useMyPath() {
     setFrom(chosenFrom)
     write(PATH_KEY, next)
     write(FROM_KEY, chosenFrom)
+    setExploring(false)
   }, [])
 
   return { slug, from, choose }
@@ -258,4 +259,52 @@ export function clearLocalProgress() {
   setAccountSync(null)
   for (const key of ALL_KEYS) write(key, '')
   window.dispatchEvent(new Event(CHANGED))
+}
+
+// ---- Focus mode: once a career is chosen, the site shows only that path.
+// "Exploring" is a short visit to the rest of the site, remembered only until the tab closes.
+const EXPLORE_KEY = 'careerpath-exploring'
+const FOCUS_CHANGED = 'careerpath-focus-changed'
+
+function readExploring(): boolean {
+  try {
+    return sessionStorage.getItem(EXPLORE_KEY) === 'yes'
+  } catch {
+    return false
+  }
+}
+
+export function setExploring(on: boolean) {
+  try {
+    if (on) sessionStorage.setItem(EXPLORE_KEY, 'yes')
+    else sessionStorage.removeItem(EXPLORE_KEY)
+  } catch {
+    // Without storage, the switch still works until the page reloads.
+  }
+  window.dispatchEvent(new Event(FOCUS_CHANGED))
+}
+
+/** focused: show only the chosen path. exploring: a path is chosen, but the student is looking around. */
+export function useFocus() {
+  const { slug, from } = useMyPath()
+  const [exploring, setLocal] = useState(readExploring)
+  useEffect(() => {
+    const reload = () => setLocal(readExploring())
+    window.addEventListener(FOCUS_CHANGED, reload)
+    return () => window.removeEventListener(FOCUS_CHANGED, reload)
+  }, [])
+  return {
+    slug,
+    from,
+    course: new URLSearchParams(from).get('course') ?? '',
+    focused: Boolean(slug) && !exploring,
+    exploring: Boolean(slug) && exploring,
+    explore: () => setExploring(true),
+    back: () => setExploring(false),
+  }
+}
+
+/** "Doctor (MBBS)" reads better in a sentence as "Doctor". */
+export function shortName(name: string): string {
+  return name.replace(/\s*\(.*\)\s*$/, '')
 }

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { useMyPath } from '../context/useMyCourse'
+import { useFocus, useMyPath } from '../context/useMyCourse'
+import { FocusHome } from './FocusHome'
 import { AreaGrid } from './Choose'
 
 const JOURNEY = [
@@ -54,6 +55,8 @@ function TwoWays() {
 }
 
 export function Home() {
+  const { focused } = useFocus()
+  if (focused) return <FocusHome />
   return (
     <>
       <section className="relative overflow-hidden rounded-2xl bg-pine px-6 py-10 text-white md:px-12 md:py-14">

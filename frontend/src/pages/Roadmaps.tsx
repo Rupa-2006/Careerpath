@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { api, type ApiError, type CourseDetail, type RoadmapDetail, type RoadmapStep } from '../api/client'
 import { AfterRoadmap, CareerLadder, CareerNews, EmptyChanges } from '../components/CareerExtras'
 import { CareerPicker } from '../components/CareerPicker'
@@ -9,9 +9,11 @@ import { TechChanges } from '../components/TechChanges'
 import { SourceLine } from '../components/Trust'
 import { useAuth } from '../context/AuthContext'
 import { useLang } from '../context/Language'
-import { useDoneSteps, useMyPath } from '../context/useMyCourse'
+import { useDoneSteps, useFocus, useMyPath } from '../context/useMyCourse'
 
 export function Roadmaps() {
+  const { focused, slug } = useFocus()
+  if (focused) return <Navigate to={`/roadmaps/${slug}`} replace />
   return (
     <>
       <h1 className="text-3xl">Career paths</h1>

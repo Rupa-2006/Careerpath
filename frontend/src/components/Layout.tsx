@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useLang, type TextKey } from '../context/Language'
+import { useFocus } from '../context/useMyCourse'
 
 const NAV: [string, TextKey][] = [
   ['/', 'nav_home'],
@@ -13,6 +14,17 @@ const NAV: [string, TextKey][] = [
   ['/assistant', 'nav_assistant'],
 ]
 
+/** The menu once a career is chosen: only things about that path. */
+const focusNav = (slug: string): [string, string][] => [
+  ['/', 'My Path home'],
+  [`/roadmaps/${slug}`, 'My Roadmap'],
+  ['/updates', "What's Changing"],
+  ['/skills', 'My Skills'],
+  ['/my-path', 'My Progress'],
+  ['/scholarships', 'Scholarships'],
+  ['/assistant', 'Ask'],
+]
+
 const navClass = ({ isActive }: { isActive: boolean }) =>
   `rounded-md px-2 py-2 text-sm text-white no-underline hover:bg-white/10 ${isActive ? 'bg-white/15 font-semibold' : ''}`
 
@@ -22,6 +34,7 @@ export function Layout() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
+  const focus = useFocus()
 
   useEffect(() => {
     setOpen(false)
@@ -68,12 +81,27 @@ export function Layout() {
           </div>
 
           <nav aria-label="Main" className={`${open ? 'flex' : 'hidden'} w-full flex-col pb-2 xl:order-2 xl:flex xl:w-auto xl:flex-row xl:pb-0`}>
-            {NAV.map(([to, label]) => (
-              <NavLink key={to} to={to} end={to === '/'} className={navClass}>{t(label)}</NavLink>
-            ))}
+            {focus.focused
+              ? focusNav(focus.slug).map(([to, label]) => (
+                <NavLink key={to} to={to} end={to === '/'} className={navClass}>{label}</NavLink>
+              ))
+              : NAV.map(([to, label]) => (
+                <NavLink key={to} to={to} end={to === '/'} className={navClass}>{t(label)}</NavLink>
+              ))}
           </nav>
         </div>
       </header>
+
+      {focus.exploring && (
+        <div className="bg-sun/25 px-4 py-2 text-sm print:hidden">
+          <p className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1">
+            <span>🧭 You're exploring other careers.</span>
+            <button type="button" className="cursor-pointer font-semibold text-pine underline" onClick={() => { focus.back(); navigate('/') }}>
+              ← Back to my path
+            </button>
+          </p>
+        </div>
+      )}
 
       <main id="main" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6">
         <Outlet />
@@ -83,6 +111,13 @@ export function Layout() {
         <div className="mx-auto max-w-7xl">
           <p className="font-bold text-white">CareerPath: Discover Your Future</p>
           <p className="mt-1">{t('footer_note')}</p>
+          {focus.focused && (
+            <p className="mt-2">
+              <button type="button" className="cursor-pointer font-semibold text-white underline" onClick={() => { focus.explore(); navigate('/choose') }}>
+                Explore other careers
+              </button>
+            </p>
+          )}
           <p className="mt-2 flex flex-wrap gap-4">
             <Link to="/quiz" className="text-white">{t('take_quiz')}</Link>
             <Link to="/skills" className="text-white">Skills checklist</Link>
