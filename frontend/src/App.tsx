@@ -10,6 +10,7 @@ import { CollegeCompare } from './pages/CollegeCompare'
 import { CollegeDetailPage } from './pages/CollegeDetail'
 import { Colleges } from './pages/Colleges'
 import { Compare } from './pages/Compare'
+import { CompareCareers } from './pages/CompareCareers'
 import { CourseDetailPage } from './pages/CourseDetail'
 import { Home } from './pages/Home'
 import { DatesPage, UpdatesPage } from './pages/Info'
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="all-courses" element={<AllCourses />} />
             <Route path="courses/:slug" element={<CourseDetailPage />} />
             <Route path="compare" element={<Compare />} />
+            <Route path="compare-careers" element={<CompareCareers />} />
             <Route path="quiz" element={<Quiz />} />
             <Route path="roadmaps" element={<Roadmaps />} />
             <Route path="roadmaps/:slug" element={<RoadmapPage />} />

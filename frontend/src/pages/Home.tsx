@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { InstallApp } from '../components/InstallApp'
 import { AreaGrid } from './Choose'
 
 const JOURNEY = [
@@ -20,6 +21,7 @@ export function Home() {
             <a href="#careers" className="btn btn-sun">Start here ↓</a>
             <Link to="/quiz" className="btn border-2 border-white/60 text-white hover:bg-white/10">Not sure? Take the quiz</Link>
           </div>
+          <InstallApp className="mt-3 !border-white/60 !text-white" />
         </div>
       </section>
 

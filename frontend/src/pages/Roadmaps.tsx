@@ -129,6 +129,7 @@ export function RoadmapPage() {
         {mine === roadmap.slug
           ? <Link to="/my-path" className="btn btn-outline">Open My Path</Link>
           : <button type="button" className="btn btn-primary" onClick={() => choose(roadmap.slug, area && courseSlug ? `area=${area}&course=${courseSlug}` : '')}>Make this my path</button>}
+        <Link to={`/compare-careers?a=${roadmap.slug}`} className="btn btn-outline">Compare with another career</Link>
         <span className="text-sm text-muted">{doneCount} of {roadmap.step_count} steps done</span>
       </div>
 
