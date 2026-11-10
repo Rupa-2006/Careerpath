@@ -548,3 +548,9 @@ COURSE_LIST = [
     ("B.Com LL.B", "Law", "", "AP", "AP LAWCET", "int-llb", "cap"),
     ("B.Arch", "Architecture", "", "AP", "AP B.Arch admissions", "b-arch", "cap"),
 ]
+
+
+# Polytechnic diplomas from the official SBTET lists (added 10 November 2026)
+from scripts.diplomas_more import DIPLOMA_LIST  # noqa: E402
+
+COURSE_LIST += DIPLOMA_LIST

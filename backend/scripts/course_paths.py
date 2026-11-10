@@ -38,3 +38,7 @@ COURSE_PATHS.update(COURSE_NOTES)
 from scripts.courses_links import COURSE_NOTES as _DEGREE_NOTES  # noqa: E402
 
 COURSE_PATHS.update(_DEGREE_NOTES)
+
+from scripts.diplomas_more import DIPLOMA_NOTES  # noqa: E402
+
+COURSE_PATHS.update(DIPLOMA_NOTES)

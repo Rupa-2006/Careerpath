@@ -338,12 +338,13 @@ from scripts.engineering_links import COURSE_ROADMAPS  # noqa: E402
 
 
 from scripts.courses_links import COURSE_ROADMAPS as _DEGREE_ROADMAPS  # noqa: E402
+from scripts.diplomas_more import DIPLOMA_ROADMAPS as _DIPLOMA_ROADMAPS  # noqa: E402
 
 
 def link_courses(goals: list[dict]) -> list[dict]:
     """Adds the newer courses to the paths they lead to."""
     for goal in goals:
-        for course, roadmaps in {**COURSE_ROADMAPS, **_DEGREE_ROADMAPS}.items():
+        for course, roadmaps in {**COURSE_ROADMAPS, **_DEGREE_ROADMAPS, **_DIPLOMA_ROADMAPS}.items():
             if goal["slug"] in roadmaps and course not in goal["courses"]:
                 goal["courses"].append(course)
     return goals
