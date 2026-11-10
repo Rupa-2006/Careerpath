@@ -120,6 +120,10 @@ QUIZ = [
         ("A polytechnic diploma in design, printing or animation", "", ["dip-design"]),
         ("A polytechnic diploma in office work and accounts", "", ["dip-commerce"]),
         ("A polytechnic diploma in home science", "", ["dip-home-science"]),
+        ("An ITI trade such as electrician, fitter or mechanic", "", ["iti-engineering"]),
+        ("An ITI trade such as computer operator, health technician or tailor", "", ["iti-non-engineering"]),
+        ("Nursing through a GNM diploma", "", ["gnm"]),
+        ("Becoming a teacher through a 4-year integrated B.Ed (ITEP)", "", ["itep"]),
         ("None of these", "", []),
     ]),
 ]

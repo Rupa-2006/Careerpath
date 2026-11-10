@@ -288,8 +288,8 @@ TEACHER = goal("teacher", "School Teacher", "How to grow from your degree to tea
          "Teach a 10-minute lesson to friends, and ask what was clear and what was not."),
     step(2, 2, "Volunteer to teach", "Real classrooms teach you more than books.", NCS,
          "Volunteer at a school, tuition centre or NGO for a few hours each week."),
-    step(3, 1, "Learn the teaching qualification rules", "Schools need recognised teaching degrees, and NCTE sets the rules.", NCTE,
-         "Read the NCTE website, and note which teaching degree you need, such as a B.Ed."),
+    step(3, 1, "Learn the teaching qualification rules", "Schools need recognised teaching degrees, and NCTE sets the rules. After a regular degree, that usually means a 2-year B.Ed.", NCTE,
+         "Read the NCTE website, and note which teaching degree you need, such as a B.Ed after your degree."),
     step(3, 2, "Learn to use digital teaching tools", "Schools now use slides, videos and online tests.", SWAYAM,
          "Make one short lesson with slides and a 5-question online quiz."),
     step(4, 1, "Prepare for teacher eligibility tests", "Government and many private schools ask for a teacher eligibility test.", NCS,
@@ -339,12 +339,13 @@ from scripts.engineering_links import COURSE_ROADMAPS  # noqa: E402
 
 from scripts.courses_links import COURSE_ROADMAPS as _DEGREE_ROADMAPS  # noqa: E402
 from scripts.diplomas_more import DIPLOMA_ROADMAPS as _DIPLOMA_ROADMAPS  # noqa: E402
+from scripts.others_more import OTHER_ROADMAPS as _OTHER_ROADMAPS  # noqa: E402
 
 
 def link_courses(goals: list[dict]) -> list[dict]:
     """Adds the newer courses to the paths they lead to."""
     for goal in goals:
-        for course, roadmaps in {**COURSE_ROADMAPS, **_DEGREE_ROADMAPS, **_DIPLOMA_ROADMAPS}.items():
+        for course, roadmaps in {**COURSE_ROADMAPS, **_DEGREE_ROADMAPS, **_DIPLOMA_ROADMAPS, **_OTHER_ROADMAPS}.items():
             if goal["slug"] in roadmaps and course not in goal["courses"]:
                 goal["courses"].append(course)
     return goals

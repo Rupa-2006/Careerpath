@@ -554,3 +554,8 @@ COURSE_LIST = [
 from scripts.diplomas_more import DIPLOMA_LIST  # noqa: E402
 
 COURSE_LIST += DIPLOMA_LIST
+
+# Official Telangana ITI trades (added 10 November 2026)
+from scripts.iti_list_data import ITI_LIST  # noqa: E402
+
+COURSE_LIST += ITI_LIST

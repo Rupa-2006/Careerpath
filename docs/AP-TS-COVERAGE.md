@@ -53,6 +53,7 @@ can point to what to look for, but they are not the source.
 | B.V.Sc and B.F.Sc | Partly | Added 6 November 2026 from the AP and Telangana booklets. Course length is not confirmed |
 | Pharm.D | Partly | Added 6 November 2026 from the booklets. Course length and age rule are not confirmed |
 | B.Sc Horticulture | Partly | Added 6 November 2026. Course length is not confirmed |
+| ITI, GNM, ITEP | On site | ITI (Telangana list of 47 trades), GNM (INC rule), ITEP (NCTE) |
 | Food technology | On site | B.Tech Food Technology page (subject rule only: MPC or BiPC) |
 | BFA | On the site | JNAFAU in Telangana, and OAMDC in AP |
 | Other fine arts, such as music and dance | Partly | BPA music and dance are in the full course list. No detail page yet |

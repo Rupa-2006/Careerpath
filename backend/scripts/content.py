@@ -187,7 +187,7 @@ FIELDS = [
      "Some exams are open after Class 12. Many others need a degree.",
      "Steady study habits, patience, and keeping up with current affairs.",
      "Higher-level exams after graduation, and promotion within service.", "ssc"),
-    ("diploma", "Diploma and Polytechnic", "Other options: shorter, practical courses. Polytechnic diplomas are usually joined after Class 10.",
+    ("diploma", "Diploma and Polytechnic", "Other options: shorter, practical courses. Polytechnic diplomas and ITI are usually joined after Class 10.",
      "Polytechnics teach hands-on technical skills. Most polytechnic diplomas are joined after Class 10 through POLYCET, so for many Inter students a degree is the next step. A diploma can still lead to work, or to B.Tech in the second year through ECET.",
      "Practical skills in one branch, with less theory than a degree.",
      "Rules depend on each state's technical board.",
@@ -697,3 +697,9 @@ SOURCES.update({
 from scripts.diplomas_more import DIPLOMAS  # noqa: E402
 
 COURSES += DIPLOMAS
+
+# ITI, GNM and ITEP (added 10 November 2026)
+from scripts.others_more import OTHER_COURSES, OTHER_SOURCES  # noqa: E402
+
+SOURCES.update(OTHER_SOURCES)
+COURSES += OTHER_COURSES

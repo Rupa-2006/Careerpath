@@ -201,7 +201,7 @@ def test_every_field_has_a_page_and_an_explanation(client, show_all):
 
 def test_field_course_counts_are_real(client, show_all):
     counts = {field["slug"]: field["course_count"] for field in client.get(f"{API}/fields").json()}
-    assert counts["law"] == 2 and counts["engineering"] == 29 and counts["diploma"] == 12
+    assert counts["law"] == 2 and counts["engineering"] == 29 and counts["diploma"] == 14
 
 
 def test_search_and_filters(client, show_all):
