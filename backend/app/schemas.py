@@ -1,4 +1,5 @@
 import uuid
+import re
 from datetime import date, datetime
 from typing import Literal
 
@@ -456,6 +457,7 @@ class ReviewIn(BaseModel):
 
 class UserOut(OrmModel):
     id: uuid.UUID
+    username: str
     email: str
     name: str | None
     role: str
@@ -514,7 +516,11 @@ class SavedProgressOut(SavedProgress):
     saved_at: datetime | None = None
 
 
+USERNAME_PATTERN = r"^[a-z0-9_.]{3,20}$"
+
+
 class RegisterIn(BaseModel):
+    username: str = Field(min_length=3, max_length=20)
     email: EmailStr
     password: str = Field(max_length=1000)
     name: str | None = Field(default=None, max_length=100)
@@ -525,10 +531,35 @@ class RegisterIn(BaseModel):
     def clean_name(cls, value: str | None) -> str | None:
         return (value or "").strip() or None
 
+    @field_validator("username")
+    @classmethod
+    def clean_username(cls, value: str) -> str:
+        value = value.strip().lower()
+        if not re.fullmatch(USERNAME_PATTERN, value):
+            raise ValueError("Use 3 to 20 letters, numbers, dots or underscores.")
+        return value
+
 
 class LoginIn(BaseModel):
-    email: EmailStr
+    """Log in with a username or the recovery email. ("email" is still accepted from older pages.)"""
+
+    login: str | None = Field(default=None, max_length=254)
+    email: str | None = Field(default=None, max_length=254)
     password: str = Field(max_length=1000)
+
+    @property
+    def who(self) -> str:
+        return (self.login or self.email or "").strip().lower()
+
+
+class ForgotIn(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordIn(BaseModel):
+    email: EmailStr
+    code: str = Field(pattern=r"^\d{6}$")
+    new_password: str = Field(max_length=1000)
 
 
 class ProfileIn(BaseModel):
@@ -550,6 +581,7 @@ class DeleteAccountIn(BaseModel):
 
 class AdminUserOut(OrmModel):
     id: uuid.UUID
+    username: str
     email: str
     name: str | None
     role: str

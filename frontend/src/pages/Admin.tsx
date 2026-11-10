@@ -87,7 +87,7 @@ export function Admin() {
           <tbody>
             {users.map((item) => (
               <tr key={item.id} className="border-t border-line">
-                <td className="p-3">{item.email}</td>
+                <td className="p-3">@{item.username}<span className="block text-xs text-muted">{item.email}</span></td>
                 <td className="p-3">{item.name ?? '–'}</td>
                 <td className="p-3">{item.role}</td>
                 <td className="p-3">{item.is_active ? 'Active' : 'Deactivated'}</td>

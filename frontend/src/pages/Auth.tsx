@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { api, type ApiError, type RoadmapSummary } from '../api/client'
 import { useMyPath } from '../context/useMyCourse'
 import { Field, Notice } from '../components/Form'
@@ -23,6 +23,8 @@ function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   const { user, setUser } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [params] = useSearchParams()
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const { slug: pathOnDevice } = useMyPath()
@@ -43,7 +45,7 @@ function AuthPage({ mode }: { mode: 'login' | 'register' }) {
     setBusy(true)
     setError('')
     try {
-      setUser(isLogin ? await api.login(email, password) : await api.register(email, password, name, path))
+      setUser(isLogin ? await api.login(username, password) : await api.register(username, email, password, name, path))
       await savePendingQuiz()
       navigate('/')
     } catch (problem) {
@@ -57,11 +59,19 @@ function AuthPage({ mode }: { mode: 'login' | 'register' }) {
       <h1 className="text-2xl">{isLogin ? 'Log in to My Path' : 'Create your free account'}</h1>
       <p className="mb-4 mt-1 text-sm text-muted">
         {isLogin
-          ? 'You will go straight to your path: next steps, progress, what is changing and opportunities.'
+          ? 'Log in to see your path, progress and diary on any device.'
           : 'Choose your career, and your path and progress will be saved to your account on any phone or computer.'}
       </p>
+      {isLogin && params.get('reset') && <Notice kind="success">Your password has been changed. Please log in.</Notice>}
       <Notice kind="error">{error}</Notice>
       <form onSubmit={submit}>
+        <Field label={isLogin ? 'Username or email' : 'Choose a username'} hint={isLogin ? undefined : '3 to 20 letters, numbers, dots or underscores. This is what you log in with.'}>
+          <input
+            className="input" required value={username} autoComplete="username" autoCapitalize="none" spellCheck={false}
+            minLength={isLogin ? undefined : 3} maxLength={isLogin ? 254 : 20}
+            onChange={(event) => setUsername(isLogin ? event.target.value : event.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ''))}
+          />
+        </Field>
         {!isLogin && (
           <Field label="Your name (optional)">
             <input className="input" value={name} maxLength={100} autoComplete="name" onChange={(event) => setName(event.target.value)} />
@@ -78,9 +88,11 @@ function AuthPage({ mode }: { mode: 'login' | 'register' }) {
         {!isLogin && !path && (
           <p className="-mt-2 mb-3 text-sm">Not sure yet? <Link to="/choose">Explore careers first</Link>, then come back.</p>
         )}
-        <Field label="Email">
-          <input className="input" type="email" required value={email} autoComplete="email" onChange={(event) => setEmail(event.target.value)} />
-        </Field>
+        {!isLogin && (
+          <Field label="Email (for getting back into your account)" hint="Used only if you forget your password or username. It is never shown on the site.">
+            <input className="input" type="email" required value={email} autoComplete="email" onChange={(event) => setEmail(event.target.value)} />
+          </Field>
+        )}
         <Field label="Password" hint={isLogin ? undefined : 'At least 10 characters. Not only numbers.'}>
           <input
             className="input" type="password" required value={password}
@@ -93,6 +105,12 @@ function AuthPage({ mode }: { mode: 'login' | 'register' }) {
           {busy ? 'Please wait…' : isLogin ? 'Log in' : 'Sign up'}
         </button>
       </form>
+      {isLogin && (
+        <p className="mt-3 flex flex-wrap gap-x-4 text-sm">
+          <Link to="/forgot-password">Forgot password?</Link>
+          <Link to="/forgot-username">Forgot username?</Link>
+        </p>
+      )}
       <p className="mt-4 text-sm">
         {isLogin ? <>New here? <Link to="/register">Create an account</Link></> : <>Already have an account? <Link to="/login">Log in</Link></>}
       </p>

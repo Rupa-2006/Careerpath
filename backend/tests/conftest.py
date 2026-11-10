@@ -71,14 +71,14 @@ def career():
 
 @pytest.fixture
 def student(client, career):
-    response = client.post("/api/v1/auth/register", json={"email": "asha@example.com", "password": PASSWORD, "path": "web-developer"})
+    response = client.post("/api/v1/auth/register", json={"username": "asha", "email": "asha@example.com", "password": PASSWORD, "path": "web-developer"})
     assert response.status_code == 201
     return response.json()
 
 
 @pytest.fixture
 def admin_client(db):
-    db.add(User(email="admin@example.com", password_hash=hash_password(PASSWORD), role="admin"))
+    db.add(User(email="admin@example.com", username="admin", password_hash=hash_password(PASSWORD), role="admin"))
     db.commit()
     with TestClient(app, headers={"X-CareerPath-Client": "web"}) as test_client:
         assert test_client.post(

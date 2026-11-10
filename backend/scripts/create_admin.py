@@ -24,7 +24,8 @@ def main() -> None:
                 raise SystemExit(problem)
             if password != getpass("Type it again: "):
                 raise SystemExit("The passwords didn't match.")
-            db.add(User(email=email, password_hash=hash_password(password), role="admin"))
+            username = input("Admin username: ").strip().lower()
+            db.add(User(email=email, username=username, password_hash=hash_password(password), role="admin"))
         db.commit()
     print(f"{email} is now an admin.")
 

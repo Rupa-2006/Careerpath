@@ -24,6 +24,12 @@ class Settings(BaseSettings):
     assistant_ai_provider: str = "gemini"
     local_ai_url: str = "http://127.0.0.1:11434"
     local_ai_model: str = "llama3.2:3b"
+    # Account emails (reset codes). Empty SMTP_HOST means laptop mode: emails are printed, not sent.
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = ""
 
     @field_validator("environment")
     @classmethod

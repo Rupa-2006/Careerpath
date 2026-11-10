@@ -6,6 +6,7 @@ import { Account } from './pages/Account'
 import { Admin } from './pages/Admin'
 import { Assistant } from './pages/Assistant'
 import { Login, Register } from './pages/Auth'
+import { ForgotPassword, ForgotUsername } from './pages/Forgot'
 import { CollegeCompare } from './pages/CollegeCompare'
 import { CollegeDetailPage } from './pages/CollegeDetail'
 import { Colleges } from './pages/Colleges'
@@ -72,6 +73,8 @@ export default function App() {
             <Route path="assistant" element={<Assistant />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="forgot-username" element={<ForgotUsername />} />
             <Route path="account" element={<Protected><Account /></Protected>} />
             <Route path="my-progress" element={<Navigate to="/my-path?tab=progress" replace />} />
             <Route path="admin" element={<Protected admin><Admin /></Protected>} />

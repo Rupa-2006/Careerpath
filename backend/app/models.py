@@ -88,7 +88,8 @@ class User(Timestamped, Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    email: Mapped[str] = mapped_column(String(254), unique=True)
+    email: Mapped[str] = mapped_column(String(254), unique=True)   # used only for recovery; never shown to others
+    username: Mapped[str] = mapped_column(String(20), unique=True)  # what the student logs in with
     password_hash: Mapped[str] = mapped_column(String(255))
     name: Mapped[str | None] = mapped_column(String(100))
     role: Mapped[str] = mapped_column(String(20), default="student", server_default="student")
@@ -831,3 +832,17 @@ class PathChangeRequest(Timestamped, Base):
     decided_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
 
     user: Mapped[User] = relationship(foreign_keys=[user_id])
+
+
+class PasswordReset(Timestamped, Base):
+    """A one-time reset code. Only its hash is kept. It expires, and allows only a few tries."""
+
+    __tablename__ = "password_resets"
+    __table_args__ = (Index("ix_password_resets_user", "user_id"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    code_hash: Mapped[str] = mapped_column(String(64))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    attempts: Mapped[int] = mapped_column(Integer, default=0, server_default="0")

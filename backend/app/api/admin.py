@@ -80,7 +80,7 @@ def users(
     conditions = []
     if q.strip():
         pattern = "%" + q.strip().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%"
-        conditions.append(User.email.ilike(pattern, escape="\\") | User.name.ilike(pattern, escape="\\"))
+        conditions.append(User.email.ilike(pattern, escape="\\") | User.name.ilike(pattern, escape="\\") | User.username.ilike(pattern, escape="\\"))
     found = db.scalars(
         select(User).where(*conditions).order_by(User.created_at.desc()).offset((page - 1) * size).limit(size)
     ).all()

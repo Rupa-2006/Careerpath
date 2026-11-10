@@ -32,7 +32,7 @@ def test_new_account_starts_with_the_path_chosen_at_sign_up(client, student):
 
 
 def test_sign_up_needs_a_real_career(client):
-    base = {"email": "new@example.com", "password": "Another-Strong-99"}
+    base = {"username": "newstudent", "email": "new@example.com", "password": "Another-Strong-99"}
     assert client.post("/api/v1/auth/register", json=base).status_code == 422
     assert client.post("/api/v1/auth/register", json={**base, "path": "not-a-career"}).status_code == 422
 
@@ -66,7 +66,7 @@ def test_refuses_bad_or_oversized_data(client, student, bad):
 def test_each_student_sees_only_their_own(client, student):
     client.put(URL, json=GOOD)
     client.post("/api/v1/auth/logout")
-    client.post("/api/v1/auth/register", json={"email": "ravi@example.com", "password": "Another-Strong-99", "path": "web-developer"})
+    client.post("/api/v1/auth/register", json={"username": "ravi", "email": "ravi@example.com", "password": "Another-Strong-99", "path": "web-developer"})
     assert client.get(URL).json()["steps"] == {}
 
 

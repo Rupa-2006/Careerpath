@@ -1,5 +1,6 @@
 export type User = {
   id: string
+  username: string
   path: string   // the career chosen at sign-up; fixed
   email: string
   name: string | null
@@ -186,6 +187,7 @@ export type AssistantQuestion = { message: string; subject_ids: number[]; stream
 
 export type AdminUser = {
   id: string
+  username: string
   email: string
   name: string | null
   role: User['role']
@@ -245,9 +247,13 @@ export const api = {
   pathRequests: () => request<PathChangeRequest[]>('/admin/path-requests'),
   decidePathRequest: (id: number, approve: boolean) => request<PathChangeRequest>(`/admin/path-requests/${id}`, 'POST', { approve }),
   saveProgress: (data: SavedProgress) => request<SavedProgress>('/me/saved-progress', 'PUT', data),
-  register: (email: string, password: string, name: string, path: string) =>
-    request<User>('/auth/register', 'POST', { email, password, name, path }),
-  login: (email: string, password: string) => request<User>('/auth/login', 'POST', { email, password }),
+  register: (username: string, email: string, password: string, name: string, path: string) =>
+    request<User>('/auth/register', 'POST', { username, email, password, name, path }),
+  login: (login: string, password: string) => request<User>('/auth/login', 'POST', { login, password }),
+  forgotPassword: (email: string) => request<{ message: string }>('/auth/forgot-password', 'POST', { email }),
+  resetPassword: (email: string, code: string, new_password: string) =>
+    request<{ message: string }>('/auth/reset-password', 'POST', { email, code, new_password }),
+  forgotUsername: (email: string) => request<{ message: string }>('/auth/forgot-username', 'POST', { email }),
   logout: () => request<void>('/auth/logout', 'POST'),
   updateProfile: (changes: Partial<Pick<User, 'name' | 'region_id' | 'stream_id'>>) =>
     request<User>('/me', 'PATCH', changes),

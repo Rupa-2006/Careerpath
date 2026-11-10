@@ -55,7 +55,7 @@ export function Account() {
   return (
     <div className="mx-auto max-w-lg">
       <h1 className="text-3xl">My account</h1>
-      <p className="mb-4 mt-1 text-muted">{user?.email}</p>
+      <p className="mb-4 mt-1 text-muted">@{user?.username} · recovery email: {user?.email} (never shown to others)</p>
       <Notice kind="success">{message}</Notice>
       <Notice kind="error">{error}</Notice>
 

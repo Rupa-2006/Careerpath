@@ -326,3 +326,12 @@ The owner chose to let **everyone** sign up, with no age question, so students c
 - Logging out clears the progress from that device, so the next person on a shared computer can't see it.
 - Students can still use everything without an account; progress then stays only on their device.
 - **Review this before about 13 May 2027.** From then, India's data law is expected to need verifiable parent consent before keeping any personal data of a student under 18 (sections 1 and 2 above). Many users will be 17. Talk to a lawyer before then about an age question and a parent consent step.
+
+## Update, 10 November 2026: usernames and account recovery
+
+- Students log in with a username (or their email). The email is kept only for recovery and is never shown to other people.
+- Forgot password: a 6-digit code is emailed. Only a hash of it is stored; it works once, expires in 30 minutes and allows 5 tries. Using it logs the account out everywhere.
+- Forgot username: the username is emailed.
+- These pages give the same answer whether or not an email has an account, and are rate-limited.
+- Until real email is set up (SMTP settings in backend/.env), emails are printed in the server window and saved to backend/laptop-emails.log, which is never uploaded.
+- This closes the "No password reset" gap listed in section 1.
