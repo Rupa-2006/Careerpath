@@ -1,0 +1,42 @@
+# Render Blueprint for CareerPath (free plan).
+# - careerpath-api: the FastAPI server. Its database is on Neon; the link is entered once in Render, never stored here.
+# - careerpath: the website. Requests to /api/ are passed to the server, so logins work on one address.
+services:
+  - type: web
+    name: careerpath-api
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"
+    healthCheckPath: /api/v1/fields
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false          # paste the Neon connection link in Render when asked
+      - key: ALLOWED_ORIGINS
+        value: https://careerpath.onrender.com
+      - key: SHOW_UNPUBLISHED
+        value: "false"
+
+  - type: web
+    name: careerpath
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://careerpath-api.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff

@@ -31,6 +31,15 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_from: str = ""
 
+    @field_validator("database_url")
+    @classmethod
+    def use_psycopg(cls, value: str) -> str:
+        """Hosts such as Neon give links starting postgresql:// or postgres://. This app uses the psycopg driver."""
+        for prefix in ("postgresql://", "postgres://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg://" + value[len(prefix):]
+        return value
+
     @field_validator("environment")
     @classmethod
     def known_environment(cls, value: str) -> str:
