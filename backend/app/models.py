@@ -98,6 +98,7 @@ class User(Timestamped, Base):
     # My Path: chosen career, finished steps with dates and notes, and skills. Deleted with the account.
     saved_progress: Mapped[dict | None] = mapped_column(JSONB)
     saved_progress_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    path_changes: Mapped[int] = mapped_column(Integer, default=0, server_default="0")   # changes of the sign-up career
 
     @property
     def path(self) -> str:
@@ -809,3 +810,24 @@ class UserSkill(Timestamped, Base):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id", ondelete="CASCADE"))
     state: Mapped[str] = mapped_column(String(10))
+
+
+class PathChangeRequest(Timestamped, Base):
+    """A student's request to change their career after their one free change. An admin answers it."""
+
+    __tablename__ = "path_change_requests"
+    __table_args__ = (
+        Index("ix_path_change_requests_user", "user_id"),
+        CheckConstraint(_in("status", ("pending", "approved", "rejected")), name="status"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    from_path: Mapped[str] = mapped_column(String(80))
+    to_path: Mapped[str] = mapped_column(String(80))
+    reason: Mapped[str] = mapped_column(String(300), default="", server_default="")
+    status: Mapped[str] = mapped_column(String(20), default="pending", server_default="pending")
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decided_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+
+    user: Mapped[User] = relationship(foreign_keys=[user_id])

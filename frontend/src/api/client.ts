@@ -16,6 +16,12 @@ export type SavedProgress = {
   skills: string[]
   saved_at?: string | null
 }
+export type PathChangeRequest = {
+  id: number; from_path: string; from_name: string; to_path: string; to_name: string; reason: string
+  status: 'pending' | 'approved' | 'rejected'; created_at: string; decided_at: string | null
+  student_email: string | null; student_name: string | null
+}
+export type PathChangeStatus = { path: string; free_left: number; latest: PathChangeRequest | null }
 export type Region = { id: number; code: string; name: string; kind: 'state' | 'union_territory' }
 export type Stream = { id: number; slug: string; name: string; aliases: string[]; subjects: { id: number; name: string }[] }
 
@@ -228,6 +234,11 @@ async function request<T>(path: string, method = 'GET', body?: unknown): Promise
 export const api = {
   me: () => request<User>('/auth/me'),
   savedProgress: () => request<SavedProgress>('/me/saved-progress'),
+  pathChange: () => request<PathChangeStatus>('/me/path-change'),
+  changePath: (path: string, reason: string) =>
+    request<{ result: 'changed' | 'requested'; message: string }>('/me/path-change', 'POST', { path, reason }),
+  pathRequests: () => request<PathChangeRequest[]>('/admin/path-requests'),
+  decidePathRequest: (id: number, approve: boolean) => request<PathChangeRequest>(`/admin/path-requests/${id}`, 'POST', { approve }),
   saveProgress: (data: SavedProgress) => request<SavedProgress>('/me/saved-progress', 'PUT', data),
   register: (email: string, password: string, name: string, path: string) =>
     request<User>('/auth/register', 'POST', { email, password, name, path }),

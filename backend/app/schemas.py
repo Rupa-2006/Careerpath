@@ -558,3 +558,42 @@ class AdminSummary(BaseModel):
     streams: int
     sources: int
     pending_verification: int
+
+
+class PathChangeIn(BaseModel):
+    path: str = Field(min_length=1, max_length=80, pattern=r"^[a-z0-9-]+$")
+    reason: str = Field(default="", max_length=300)
+
+    @field_validator("reason")
+    @classmethod
+    def clean_reason(cls, value: str) -> str:
+        return value.strip()
+
+
+class PathChangeOut(BaseModel):
+    result: str   # changed or requested
+    message: str
+
+
+class PathChangeRequestOut(BaseModel):
+    id: int
+    from_path: str
+    from_name: str
+    to_path: str
+    to_name: str
+    reason: str
+    status: str
+    created_at: datetime
+    decided_at: datetime | None
+    student_email: str | None = None
+    student_name: str | None = None
+
+
+class PathChangeStatus(BaseModel):
+    path: str
+    free_left: int
+    latest: PathChangeRequestOut | None
+
+
+class PathChangeDecisionIn(BaseModel):
+    approve: bool

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, type ApiError } from '../api/client'
 import { Field, Notice } from '../components/Form'
+import { PathChange } from '../components/PathChange'
 import { useAuth } from '../context/AuthContext'
 
 export function Account() {
@@ -57,6 +58,8 @@ export function Account() {
       <p className="mb-4 mt-1 text-muted">{user?.email}</p>
       <Notice kind="success">{message}</Notice>
       <Notice kind="error">{error}</Notice>
+
+      <PathChange />
 
       <form onSubmit={saveName} className="card mb-4">
         <h2 className="mb-3 text-xl">Your name</h2>

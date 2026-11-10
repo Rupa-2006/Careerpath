@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.api import admin, assistant, auth, catalog, colleges, journey, profile, reference, skills
+from app.api import admin, assistant, auth, catalog, colleges, journey, profile, reference, skills, path_change
 from app.api.deps import Db
 from app.core.config import BACKEND_DIR, get_settings
 
@@ -75,6 +75,7 @@ api.include_router(assistant.router)
 api.include_router(colleges.router)
 api.include_router(colleges.admin_router)
 api.include_router(admin.router)
+api.include_router(path_change.router)
 app.include_router(api)
 
 

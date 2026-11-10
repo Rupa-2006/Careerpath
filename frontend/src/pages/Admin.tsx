@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { api, type AdminSummary, type AdminUser, type ApiError } from '../api/client'
 import { Notice } from '../components/Form'
 import { ImportReview } from '../components/ImportReview'
+import { PathRequestsAdmin } from '../components/PathChange'
 import { ReportsAdmin } from '../components/ReportsAdmin'
 import { ReviewQueue } from '../components/ReviewQueue'
 import { WatchAlerts } from '../components/WatchAlerts'
@@ -68,6 +69,7 @@ export function Admin() {
       </dl>
 
       <WatchAlerts />
+      <PathRequestsAdmin />
       <ReportsAdmin />
       <ImportReview />
       <ReviewQueue onChange={() => load(query)} />
