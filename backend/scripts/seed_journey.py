@@ -26,9 +26,12 @@ from scripts.stepora.roadmaps import GOALS
 from scripts.stepora.roadmaps_more import MORE_GOALS
 from scripts.stepora.roadmaps_path import PATH_GOALS
 from scripts.stepora.roadmaps_path2 import MORE_PATH_GOALS
-from scripts.stepora.roadmaps_extra import with_extra_steps
+from scripts.stepora.roadmaps_extra import CHEMICAL, link_courses, with_extra_steps
 
 with_extra_steps(MORE_GOALS + PATH_GOALS + MORE_PATH_GOALS)
+if CHEMICAL not in MORE_PATH_GOALS:
+    MORE_PATH_GOALS.append(CHEMICAL)
+link_courses(GOALS + MORE_GOALS + PATH_GOALS + MORE_PATH_GOALS)
 
 ROADMAP_SOURCES = {
     "web-developer": "aicte", "cyber-security-analyst": "cert-in", "data-analyst": "data-gov",
@@ -39,6 +42,7 @@ ROADMAP_SOURCES = {
     "defence-officer": "upsc-nda", "government-exams": "ssc", "vocational-professional": "ugc-bvoc",
     "company-secretary": "icsi", "health-technologist": "knruhs", "physical-education-teacher": "tg-pecet",
     "animal-and-fisheries": "eapcet-ap", "traditional-medicine-doctor": "neet-2026", "social-worker": "dost",
+    "chemical-engineer": "nptel",
 }
 TOOLS = [
     ("NotebookLM: an AI study assistant for your own notes", "https://notebooklm.google/", "Google",

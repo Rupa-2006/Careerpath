@@ -675,3 +675,9 @@ COURSES = [
         "criteria": [{"label": "All India (UGC guidelines)", "summary": "Class 12 pass from any stream, in the UGC guidelines. These date from 2014 and 2015, so check for newer rules.", "groups": [], "source": "ugc-bvoc"}],
     },
 ]
+
+
+# More B.Tech branches from the official AP and Telangana lists, added on 10 November 2026
+from scripts.engineering_more import MORE_ENGINEERING  # noqa: E402
+
+COURSES += MORE_ENGINEERING

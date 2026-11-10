@@ -29,3 +29,8 @@ COURSE_PATHS = {
     "bpharm": (None, "B.Pharm focuses on medicines and how they are made. Learn lab and quality work well."),
     "pharm-d": (None, "Pharm.D focuses on patient care. Spend extra time in hospital work."),
 }
+
+
+from scripts.engineering_links import COURSE_NOTES  # noqa: E402
+
+COURSE_PATHS.update(COURSE_NOTES)

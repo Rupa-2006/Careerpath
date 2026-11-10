@@ -72,7 +72,7 @@ def test_roadmaps_wait_for_review(client):
 
 def test_every_course_from_the_first_version_keeps_its_roadmap(client, show_all):
     roadmaps = client.get(f"{API}/roadmaps").json()
-    assert len(roadmaps) == 32 and sum(item["step_count"] for item in roadmaps) == 297
+    assert len(roadmaps) == 33 and sum(item["step_count"] for item in roadmaps) == 305
 
 
 def test_roadmap_detail_and_years(client, show_all):
@@ -155,7 +155,7 @@ def test_reloading_keeps_review_status_and_makes_no_duplicates(admin_client, db)
     seed_journey.main()
     db.expire_all()
     assert db.scalar(select(Roadmap).where(Roadmap.slug == "advocate")).status == "verified"
-    assert db.scalar(select(func.count()).select_from(RoadmapStep)) == 297
+    assert db.scalar(select(func.count()).select_from(RoadmapStep)) == 305
     assert db.scalar(select(func.count()).select_from(Translation)) == before
     admin_client.post(f"{API}/admin/review/roadmap/{roadmap.id}", json={"status": "pending_verification"})
 
@@ -268,9 +268,11 @@ class TestQuiz:
         assert any("ఀ" <= char <= "౿" for char in top["reasons"][0])
 
     def test_every_option_has_telugu(self, db):
-        options = db.scalars(select(QuizOption.id)).all()
+        """The site is English only now; options written before that still keep their Telugu."""
+        from scripts.stepora.quiz import QUIZ
+        translated = sum(1 for question in QUIZ for option in question[3] if option[1])
         count = db.scalar(select(func.count()).select_from(Translation).where(Translation.entity_type == "quiz_option", Translation.language == "te"))
-        assert count == len(options)
+        assert count == translated
 
     def test_result_is_saved_for_logged_in_students(self, client, student, db, show_all):
         assert client.get(f"{API}/me/quiz-result").json() is None

@@ -3,7 +3,7 @@ More steps for the roadmaps that were short, added on 8 November 2026, so each o
 Same rules as the other roadmap files: general guidance only, no admission rules, fees, salaries or promises.
 """
 from .roadmaps import INTERNSHALA, NCS, NPTEL, SWAYAM
-from .roadmaps_path import WHO, step
+from .roadmaps_path import WHO, goal, step
 from .roadmaps_path2 import ICAR, ICSI, IGRUA, IISER, KNRUHS, NATA, SSC, UPSC
 
 DGCA = "https://www.dgca.gov.in/"
@@ -235,4 +235,35 @@ EXTRA_STEPS |= {
 def with_extra_steps(goals: list[dict]) -> list[dict]:
     for goal in goals:
         goal["steps"] = sorted(goal["steps"] + EXTRA_STEPS.get(goal["slug"], []), key=lambda item: (item[0], item[1], item[2]))
+    return goals
+
+
+CHEMICAL = goal("chemical-engineer", "Chemical and Process Engineer", "How to grow from chemistry and maths to running safe chemical plants and processes.", ["btech-chemical"], [
+    step(1, 1, "Build your chemistry and maths base", "Every chemical engineering subject uses chemistry and maths.", NPTEL,
+         "Solve one chemistry or maths problem each day, and keep your solutions in a notebook."),
+    step(1, 2, "Learn lab safety and good habits", "Chemicals can be dangerous, so safe habits come first.", NPTEL,
+         "Learn the safety signs and rules in your college lab, and follow them every time."),
+    step(2, 1, "Learn how materials and energy move in a process", "Material and energy balances are the core of this field.", NPTEL,
+         "Draw the steps of one everyday process, such as making tea or soap, with inputs and outputs."),
+    step(2, 2, "Learn heat and mass transfer", "Most plant equipment heats, cools, mixes or separates things.", NPTEL,
+         "Find out how a pressure cooker or refrigerator works, and explain the heat flow."),
+    step(3, 1, "Learn process design and simulation tools", "Engineers plan plants on computers before building them.", NPTEL,
+         "Try one free process simulation tutorial, and design a very small process."),
+    step(3, 2, "Get industry experience", "Plant visits and internships show how real factories run.", INTERNSHALA,
+         "Do one internship or plant visit, and note three things that surprised you."),
+    step(4, 1, "Learn plant safety and environment rules", "Safe, clean operation is a legal and moral duty.", NPTEL,
+         "Read about one major industrial accident, and list what went wrong and how it could be prevented."),
+    step(4, 2, "Finish a strong project and prepare for jobs", "A focused project shows what you can do.", NCS,
+         "Finish a final-year project, make a one-page resume, and practise interviews."),
+])
+
+from scripts.engineering_links import COURSE_ROADMAPS  # noqa: E402
+
+
+def link_courses(goals: list[dict]) -> list[dict]:
+    """Adds the new B.Tech branches to the paths they lead to."""
+    for goal in goals:
+        for course, roadmaps in COURSE_ROADMAPS.items():
+            if goal["slug"] in roadmaps and course not in goal["courses"]:
+                goal["courses"].append(course)
     return goals

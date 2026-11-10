@@ -17,6 +17,7 @@ CAREER_GROWTH = {
     "embedded-engineer": ("Graduate Engineer Trainee", "Embedded Engineer", "Senior Engineer or Systems Architect", ENGINEERING_READY),
     "electrical-engineer": ("Graduate Engineer Trainee", "Electrical Engineer", "Senior Engineer or Project Manager", ENGINEERING_READY),
     "mechanical-engineer": ("Graduate Engineer Trainee", "Design or Production Engineer", "Senior Engineer or Plant Manager", ENGINEERING_READY),
+    "chemical-engineer": ("Graduate Engineer Trainee or Process Trainee", "Process or Plant Engineer", "Senior Process Engineer or Plant Manager", ENGINEERING_READY),
     "civil-engineer": ("Junior Site Engineer", "Site or Structural Engineer", "Project Manager or Senior Consultant", ENGINEERING_READY),
     "architect": ("Junior Architect", "Project Architect", "Senior Architect or Practice Owner", ["A strong portfolio", "Practical office training", "Your registration details, once ready", "Practice explaining your designs"]),
     "doctor": ("Junior Resident or Medical Officer", "Specialist, after postgraduate study", "Senior Consultant or Head of Department", HEALTH_READY),
