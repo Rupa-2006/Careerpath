@@ -32,7 +32,7 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://careerpath-api.onrender.com/api/*
+        destination: https://careerpath-api-j1j3.onrender.com/api/*
       - type: rewrite
         source: /*
         destination: /index.html
