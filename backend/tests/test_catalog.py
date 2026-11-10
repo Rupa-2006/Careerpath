@@ -201,14 +201,14 @@ def test_every_field_has_a_page_and_an_explanation(client, show_all):
 
 def test_field_course_counts_are_real(client, show_all):
     counts = {field["slug"]: field["course_count"] for field in client.get(f"{API}/fields").json()}
-    assert counts["law"] == 1 and counts["engineering"] == 29 and counts["diploma"] == 1
+    assert counts["law"] == 2 and counts["engineering"] == 29 and counts["diploma"] == 1
 
 
 def test_search_and_filters(client, show_all):
     assert {c["slug"] for c in client.get(f"{API}/courses", params={"q": "pilot"}).json()["courses"]} == {"cpl"}
     assert client.get(f"{API}/courses", params={"q": "%"}).json()["total"] == 0
-    assert {c["slug"] for c in client.get(f"{API}/courses", params={"field": "law"}).json()["courses"]} == {"ba-llb"}
-    assert {c["slug"] for c in client.get(f"{API}/courses", params={"exam": "neet-ug"}).json()["courses"]} == {"mbbs", "bsc-nursing", "bds", "bams", "bhms", "bums"}
+    assert {c["slug"] for c in client.get(f"{API}/courses", params={"field": "law"}).json()["courses"]} == {"ba-llb", "int-llb"}
+    assert {c["slug"] for c in client.get(f"{API}/courses", params={"exam": "neet-ug"}).json()["courses"]} == {"mbbs", "bsc-nursing", "bds", "bams", "bhms", "bums", "bsms"}
 
 
 def test_bad_subject_list_is_refused(client, show_all):

@@ -72,7 +72,7 @@ def test_roadmaps_wait_for_review(client):
 
 def test_every_course_from_the_first_version_keeps_its_roadmap(client, show_all):
     roadmaps = client.get(f"{API}/roadmaps").json()
-    assert len(roadmaps) == 34 and sum(item["step_count"] for item in roadmaps) == 313
+    assert len(roadmaps) == 37 and sum(item["step_count"] for item in roadmaps) == 337
 
 
 def test_roadmap_detail_and_years(client, show_all):
@@ -155,7 +155,7 @@ def test_reloading_keeps_review_status_and_makes_no_duplicates(admin_client, db)
     seed_journey.main()
     db.expire_all()
     assert db.scalar(select(Roadmap).where(Roadmap.slug == "advocate")).status == "verified"
-    assert db.scalar(select(func.count()).select_from(RoadmapStep)) == 313
+    assert db.scalar(select(func.count()).select_from(RoadmapStep)) == 337
     assert db.scalar(select(func.count()).select_from(Translation)) == before
     admin_client.post(f"{API}/admin/review/roadmap/{roadmap.id}", json={"status": "pending_verification"})
 

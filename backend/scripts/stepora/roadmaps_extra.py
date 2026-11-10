@@ -277,13 +277,73 @@ MINING = goal("mining-metallurgy-engineer", "Mining and Metallurgy Engineer", "H
          "Finish a final-year project, make a one-page resume, and practise interviews."),
 ])
 
+NCTE = "https://ncte.gov.in/"
+SANGEET = "https://www.sangeetnatak.gov.in/"
+TEACHER = goal("teacher", "School Teacher", "How to grow from your degree to teaching in a school, step by step.", ["bsc-bed"], [
+    step(1, 1, "Master your own subjects", "You can only teach well what you understand deeply.", SWAYAM,
+         "Explain one topic each week to a younger student, and see where they get confused."),
+    step(1, 2, "Learn how children learn", "Good teachers plan for different kinds of learners.", SWAYAM,
+         "Watch one free course lesson on child development, and write three ideas you will use."),
+    step(2, 1, "Practise speaking in front of a group", "Teaching is clear speaking, every day.", SWAYAM,
+         "Teach a 10-minute lesson to friends, and ask what was clear and what was not."),
+    step(2, 2, "Volunteer to teach", "Real classrooms teach you more than books.", NCS,
+         "Volunteer at a school, tuition centre or NGO for a few hours each week."),
+    step(3, 1, "Learn the teaching qualification rules", "Schools need recognised teaching degrees, and NCTE sets the rules.", NCTE,
+         "Read the NCTE website, and note which teaching degree you need, such as a B.Ed."),
+    step(3, 2, "Learn to use digital teaching tools", "Schools now use slides, videos and online tests.", SWAYAM,
+         "Make one short lesson with slides and a 5-question online quiz."),
+    step(4, 1, "Prepare for teacher eligibility tests", "Government and many private schools ask for a teacher eligibility test.", NCS,
+         "Find this year's official notice for the teacher test you need, and make a study plan."),
+    step(4, 2, "Build your teaching portfolio", "Lesson plans and feedback show schools what you can do.", NCS,
+         "Collect your best lesson plans and student feedback in one folder."),
+])
+LAB = goal("lab-analyst", "Lab and Quality Analyst", "How to grow from science lab work to testing quality in factories and labs.", [], [
+    step(1, 1, "Build careful lab habits", "Accurate, safe lab work is the core of this job.", NPTEL,
+         "Keep a neat lab notebook for every practical, with dates, readings and results."),
+    step(1, 2, "Learn lab safety", "Chemicals and samples can be dangerous.", NPTEL,
+         "Learn the safety signs and the right way to handle and throw away chemicals in your lab."),
+    step(2, 1, "Learn common testing methods", "Most labs use the same basic tests and instruments.", NPTEL,
+         "Pick one instrument in your lab, and write how it works and what it measures."),
+    step(2, 2, "Learn how to record and report results", "A test is useful only if others can trust the record.", SWAYAM,
+         "Write a one-page report of one experiment, with a clear table and conclusion."),
+    step(3, 1, "Learn quality rules and standards", "Factories follow standards to keep products safe.", "https://www.bis.gov.in/",
+         "Find one Indian Standard for a product you use, and list what it tests."),
+    step(3, 2, "Get lab or factory experience", "Internships show how real quality labs work.", INTERNSHALA,
+         "Do one internship in a testing lab, hospital lab or factory quality department."),
+    step(4, 1, "Learn the software labs use", "Labs now store results in spreadsheets and lab software.", SWAYAM,
+         "Make a spreadsheet that records test results and flags values outside the limits."),
+    step(4, 2, "Prepare for jobs or higher study", "Decide between a job now and an M.Sc first.", NCS,
+         "Make a one-page resume, and list three labs or companies you would like to work for."),
+])
+PERFORMER = goal("performing-artist", "Performing Artist (Music and Dance)", "How to grow as a musician or dancer, from daily practice to performing and teaching.", ["bpa"], [
+    step(1, 1, "Practise every day", "Skill in music and dance comes from steady daily practice.", SANGEET,
+         "Keep a practice diary, and practise at the same time every day for a month."),
+    step(1, 2, "Learn the theory behind your art", "Theory helps you understand and improve what you perform.", SWAYAM,
+         "Learn one new raga, rhythm or dance piece each month, and write what makes it special."),
+    step(2, 1, "Perform in front of people", "Stage confidence grows only by performing.", SANGEET,
+         "Perform at least once a month: in college, a temple, a function or online."),
+    step(2, 2, "Learn from senior artists", "Masters teach details that books cannot.", SANGEET,
+         "Attend one concert or workshop each month, and note one thing to try yourself."),
+    step(3, 1, "Record and share your work", "Recordings help you improve and let people find you.", SWAYAM,
+         "Record one performance, watch it back, and list three things to improve."),
+    step(3, 2, "Start teaching beginners", "Teaching deepens your own skill and can become a career.", NCS,
+         "Teach one beginner for a few weeks, and plan each class."),
+    step(4, 1, "Learn about grants, competitions and auditions", "Many artists grow through competitions and government support.", SANGEET,
+         "Read the Sangeet Natak Akademi website, and note one programme or award you could aim for."),
+    step(4, 2, "Plan your next step", "Artists perform, teach, or study further, often all three.", NCS,
+         "Write a one-page plan for the next two years: performing, teaching and study."),
+])
+
 from scripts.engineering_links import COURSE_ROADMAPS  # noqa: E402
 
 
+from scripts.courses_links import COURSE_ROADMAPS as _DEGREE_ROADMAPS  # noqa: E402
+
+
 def link_courses(goals: list[dict]) -> list[dict]:
-    """Adds the new B.Tech branches to the paths they lead to."""
+    """Adds the newer courses to the paths they lead to."""
     for goal in goals:
-        for course, roadmaps in COURSE_ROADMAPS.items():
+        for course, roadmaps in {**COURSE_ROADMAPS, **_DEGREE_ROADMAPS}.items():
             if goal["slug"] in roadmaps and course not in goal["courses"]:
                 goal["courses"].append(course)
     return goals

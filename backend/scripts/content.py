@@ -681,3 +681,9 @@ COURSES = [
 from scripts.engineering_more import MORE_ENGINEERING  # noqa: E402
 
 COURSES += MORE_ENGINEERING
+
+
+# Degree, integrated and other official courses that had no page, added on 10 November 2026
+from scripts.courses_more import MORE_COURSES  # noqa: E402
+
+COURSES += MORE_COURSES
