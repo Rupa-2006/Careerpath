@@ -19,7 +19,7 @@ services:
       - key: DATABASE_URL
         sync: false          # paste the Neon connection link in Render when asked
       - key: ALLOWED_ORIGINS
-        value: https://careerpath.onrender.com
+        value: https://careerpath-aa51.onrender.com
       - key: SHOW_UNPUBLISHED
         value: "false"
 
