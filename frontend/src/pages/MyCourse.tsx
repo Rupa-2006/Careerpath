@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { api, type ApiError, type RoadmapDetail, type Skill } from '../api/client'
 import { AfterRoadmap, CareerNews } from '../components/CareerExtras'
 import { CareerPicker } from '../components/CareerPicker'
+import { Diary, LastTime } from '../components/Diary'
 import { Notice } from '../components/Form'
 import { ProgressTracker } from '../components/ProgressTracker'
 import { SkillGap } from '../components/SkillGap'
@@ -25,6 +26,7 @@ function SaveBanner() {
 
 const TABS = [
   ['next', 'Next steps'],
+  ['diary', '📝 My diary'],
   ['progress', 'My progress'],
   ['skills', 'My skills'],
   ['changes', "What's changing"],
@@ -77,6 +79,8 @@ export function MyPath() {
       <p className="mt-3 font-semibold">{finished.length} of {roadmap.steps.length} steps done ({percent}%)</p>
       <progress max={100} value={percent} className="mt-1 h-3 w-full accent-teal" aria-label="Path progress" />
 
+      {tab !== 'diary' && <LastTime onOpen={() => setParams({ tab: 'diary' }, { replace: true })} />}
+
       <div role="tablist" aria-label="My Path" className="mt-6 flex gap-1 overflow-x-auto border-b border-line print:hidden">
         {TABS.map(([key, label]) => (
           <button
@@ -109,6 +113,7 @@ export function MyPath() {
           </div>
         </section>
       )}
+      {tab === 'diary' && <Diary steps={roadmap.steps} />}
       {tab === 'progress' && <ProgressTracker roadmap={roadmap} done={done} skills={skills} have={have} />}
       {tab === 'skills' && (
         skills.length > 0

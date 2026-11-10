@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { SavedProgress } from '../api/client'
+import type { DiaryEntry, SavedProgress } from '../api/client'
 
 const PATH_KEY = 'careerpath-my-path'
 const FROM_KEY = 'careerpath-my-path-from'
@@ -114,7 +114,8 @@ export function useDoneSteps() {
 const LOG_KEY = 'careerpath-step-log'      // step id -> date it was finished (YYYY-MM-DD)
 const NOTES_KEY = 'careerpath-step-notes'  // step id -> what the student made, as proof
 const SKILLS_KEY = 'careerpath-my-skills'
-const ALL_KEYS = [PATH_KEY, FROM_KEY, STEPS_KEY, LOG_KEY, NOTES_KEY, SKILLS_KEY]
+const DIARY_KEY = 'careerpath-diary'       // the student's private learning diary
+const ALL_KEYS = [PATH_KEY, FROM_KEY, STEPS_KEY, LOG_KEY, NOTES_KEY, SKILLS_KEY, DIARY_KEY]
 
 function readObject(key: string): Record<string, string> {
   try {
@@ -156,6 +157,52 @@ export function useStepNotes() {
     })
   }, [])
   return { notes, save }
+}
+
+function savedDiary(): DiaryEntry[] {
+  try {
+    const value = JSON.parse(read(DIARY_KEY) || '[]')
+    return Array.isArray(value) ? value : []
+  } catch {
+    return []
+  }
+}
+
+/** Newest first: by the day it is about, then by when it was written. */
+function byNewest(a: DiaryEntry, b: DiaryEntry) {
+  return b.on.localeCompare(a.on) || b.at.localeCompare(a.at)
+}
+
+/** The learning diary: what the student did, learned and will do next. */
+export function useDiary() {
+  const [all, setAll] = useState<DiaryEntry[]>(savedDiary)
+  useOnProgressChange(useCallback(() => setAll(savedDiary()), []))
+
+  const keep = useCallback((change: (current: DiaryEntry[]) => DiaryEntry[]) => {
+    setAll((current) => {
+      const next = change(current)
+      write(DIARY_KEY, next.length ? JSON.stringify(next) : '')
+      return next
+    })
+  }, [])
+
+  const save = useCallback((entry: Omit<DiaryEntry, 'id' | 'at'> & { id?: string }) => {
+    const id = entry.id ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+    const clean = {
+      ...entry, id, at: new Date().toISOString(),
+      did: entry.did.trim().slice(0, 500), learned: entry.learned.trim().slice(0, 500), next: entry.next.trim().slice(0, 500),
+    }
+    keep((current) => [...current.filter((item) => item.id !== id), clean])
+  }, [keep])
+
+  const remove = useCallback((id: string) => {
+    keep((current) => current.map((item) => item.id === id
+      ? { id, on: item.on, at: new Date().toISOString(), did: '', learned: '', next: '', step: null, deleted: true }
+      : item))
+  }, [keep])
+
+  const entries = all.filter((item) => !item.deleted).sort(byNewest)
+  return { entries, save, remove }
 }
 
 function savedSkills(): string[] {
@@ -218,7 +265,7 @@ export function collectLocal(): SavedProgress {
     if (notes[id]) entry.note = notes[id]
     steps[String(id)] = entry
   }
-  return { path: read(PATH_KEY), path_from: read(FROM_KEY), steps, skills: savedSkills() }
+  return { path: read(PATH_KEY), path_from: read(FROM_KEY), steps, skills: savedSkills(), diary: savedDiary() }
 }
 
 function applyLocal(data: SavedProgress) {
@@ -237,6 +284,7 @@ function applyLocal(data: SavedProgress) {
   write(LOG_KEY, Object.keys(log).length ? JSON.stringify(log) : '')
   write(NOTES_KEY, Object.keys(notes).length ? JSON.stringify(notes) : '')
   write(SKILLS_KEY, data.skills.length ? JSON.stringify(data.skills) : '')
+  write(DIARY_KEY, data.diary?.length ? JSON.stringify(data.diary) : '')
   push = saving
   window.dispatchEvent(new Event(CHANGED))
 }
@@ -255,6 +303,7 @@ export function mergeProgress(account: SavedProgress, device: SavedProgress): Sa
     path_from: account.path ? account.path_from : device.path_from,
     steps,
     skills: [...new Set([...account.skills, ...device.skills])].sort(),
+    diary: mergeDiary(account.diary ?? [], device.diary ?? []),
   }
 }
 
@@ -275,4 +324,14 @@ export function clearLocalProgress() {
 /** "Doctor (MBBS)" reads better in a sentence as "Doctor". */
 export function shortName(name: string): string {
   return name.replace(/\s*\(.*\)\s*$/, '')
+}
+
+/** Each entry once; when both copies have it, the most recently edited one wins (a deletion counts as an edit). */
+function mergeDiary(account: DiaryEntry[], device: DiaryEntry[]): DiaryEntry[] {
+  const merged = new Map<string, DiaryEntry>()
+  for (const entry of [...account, ...device]) {
+    const other = merged.get(entry.id)
+    if (!other || entry.at > other.at) merged.set(entry.id, entry)
+  }
+  return [...merged.values()]
 }

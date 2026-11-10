@@ -14,7 +14,12 @@ export type SavedProgress = {
   path_from: string
   steps: Record<string, { on?: string; note?: string }>
   skills: string[]
+  diary?: DiaryEntry[]
   saved_at?: string | null
+}
+/** One diary entry. Private to the student. "deleted" lets other devices remove it too. */
+export type DiaryEntry = {
+  id: string; on: string; at: string; did: string; learned: string; next: string; step?: number | null; deleted?: boolean
 }
 export type PathChangeRequest = {
   id: number; from_path: string; from_name: string; to_path: string; to_name: string; reason: string

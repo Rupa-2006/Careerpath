@@ -321,7 +321,8 @@ Commentary:
 
 The owner chose to let **everyone** sign up, with no age question, so students can keep their My Path progress on every device.
 
-- What an account now keeps: email, password hash, optional name, and My Path progress (chosen career, finished steps with dates, short notes, skills). Deleting the account deletes all of it.
+- What an account now keeps: email, password hash, optional name, and My Path progress (chosen career, finished steps with dates, short notes, skills, and a private learning diary in free text). Admin pages never show progress or the diary. Deleting the account deletes all of it.
+- The diary is free text, so a student could write personal details in it. It is shown only to that student.
 - Logging out clears the progress from that device, so the next person on a shared computer can't see it.
 - Students can still use everything without an account; progress then stays only on their device.
 - **Review this before about 13 May 2027.** From then, India's data law is expected to need verifiable parent consent before keeping any personal data of a student under 18 (sections 1 and 2 above). Many users will be 17. Talk to a lawyer before then about an age question and a parent consent step.

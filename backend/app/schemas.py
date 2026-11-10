@@ -469,6 +469,21 @@ class SavedStep(BaseModel):
     note: str | None = Field(default=None, max_length=300)                    # what the student made
 
 
+class DiaryEntry(BaseModel):
+    """One diary entry: what the student did, learned and will do next. Private to the student."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(pattern=r"^[a-z0-9-]{1,40}$")
+    on: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")                 # the day it is about
+    at: str = Field(default="", max_length=40)                          # last edited, so devices keep the newest
+    did: str = Field(default="", max_length=500)
+    learned: str = Field(default="", max_length=500)
+    next: str = Field(default="", max_length=500)
+    step: int | None = Field(default=None, ge=1, lt=1_000_000_000)      # the roadmap step it is about
+    deleted: bool = False                                               # kept briefly so other devices delete it too
+
+
 class SavedProgress(BaseModel):
     """Everything My Path keeps. Sizes are capped so an account can't be used to store anything else."""
 
@@ -478,6 +493,7 @@ class SavedProgress(BaseModel):
     path_from: str = Field(default="", max_length=200)
     steps: dict[str, SavedStep] = Field(default_factory=dict)
     skills: list[str] = Field(default_factory=list, max_length=500)
+    diary: list[DiaryEntry] = Field(default_factory=list, max_length=2000)
 
     @field_validator("steps")
     @classmethod

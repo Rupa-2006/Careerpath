@@ -75,3 +75,29 @@ def test_deleting_the_account_deletes_the_progress(client, student, db):
     client.put(URL, json=GOOD)
     assert client.request("DELETE", "/api/v1/me", json={"password": PASSWORD}).status_code == 204
     assert db.scalar(select(User).where(User.email == "asha@example.com")) is None
+
+
+DIARY = {"id": "e1", "on": "2026-11-09", "at": "2026-11-09T18:00:00Z", "did": "Two Python videos",
+         "learned": "How loops work", "next": "Start networking basics", "step": 12}
+
+
+def test_diary_is_saved_and_returned(client, student):
+    saved = client.put(URL, json={**GOOD, "diary": [DIARY]}).json()
+    assert saved["diary"][0]["learned"] == "How loops work"
+    assert client.get(URL).json()["diary"][0]["next"] == "Start networking basics"
+
+
+@pytest.mark.parametrize("bad", [
+    {**DIARY, "did": "x" * 501},
+    {**DIARY, "on": "yesterday"},
+    {**DIARY, "id": "<b>"},
+    {**DIARY, "mood": "happy"},
+])
+def test_diary_refuses_bad_entries(client, student, bad):
+    assert client.put(URL, json={**GOOD, "diary": [bad]}).status_code == 422
+
+
+def test_admins_never_see_a_diary(client, student, admin_client):
+    client.put(URL, json={**GOOD, "diary": [DIARY]})
+    listing = admin_client.get("/api/v1/admin/users").text
+    assert "loops" not in listing and "diary" not in listing
