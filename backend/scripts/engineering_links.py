@@ -25,3 +25,29 @@ COURSE_NOTES = {
     "btech-aeronautical": (None, "Your degree focuses on aircraft. Learn aerodynamics and materials well, and look for training at aviation companies."),
     "btech-chemical": (None, "Your degree is about chemical plants and processes. Strong chemistry and plant safety matter most."),
 }
+
+COURSE_ROADMAPS.update({
+    "btech-mining": ["mining-metallurgy-engineer"],
+    "btech-metallurgy": ["mining-metallurgy-engineer"],
+    "btech-textile": ["mechanical-engineer", "chemical-engineer"],
+    "btech-petroleum": ["chemical-engineer"],
+    "btech-biotech": ["researcher"],
+    "btech-biomedical": ["embedded-engineer", "health-technologist"],
+    "btech-food-tech": ["chemical-engineer", "agriculture-officer"],
+    "btech-dairy": ["agriculture-officer", "chemical-engineer"],
+    "btech-pharma-eng": ["chemical-engineer", "pharmacist"],
+    "btech-agri-eng": ["agriculture-officer", "mechanical-engineer"],
+})
+
+COURSE_NOTES.update({
+    "btech-mining": (None, "Your degree is about mines. Safety rules and field visits matter as much as theory."),
+    "btech-metallurgy": (None, "Your degree is about metals. Learn lab testing well, and visit a steel or metal plant."),
+    "btech-textile": (None, "Your degree is about fibres and fabrics. Visit a mill, and learn both machines and textile chemistry."),
+    "btech-petroleum": (None, "Your degree is about oil and gas. Strong chemistry, geology and safety matter most."),
+    "btech-biotech": (None, "Your degree mixes biology and engineering. Do lab projects, and think early about research or industry."),
+    "btech-biomedical": (None, "Your degree is about medical devices. Learn electronics well, and spend time in a hospital's equipment section."),
+    "btech-food-tech": (None, "Your degree is about food processing. Learn food safety rules and visit a food factory."),
+    "btech-dairy": (None, "Your degree is about milk and dairy products. Visit a dairy plant, and learn hygiene and quality well."),
+    "btech-pharma-eng": (None, "Your degree is about medicine factories. Learn quality rules and how plants are run."),
+    "btech-agri-eng": (None, "Your degree is about farm machines and water. Spend time on farms and with irrigation projects."),
+})

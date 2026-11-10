@@ -257,6 +257,26 @@ CHEMICAL = goal("chemical-engineer", "Chemical and Process Engineer", "How to gr
          "Finish a final-year project, make a one-page resume, and practise interviews."),
 ])
 
+IBM = "https://ibm.gov.in/"
+MINING = goal("mining-metallurgy-engineer", "Mining and Metallurgy Engineer", "How to grow from science basics to working safely in mines and metal plants.", ["btech-mining", "btech-metallurgy"], [
+    step(1, 1, "Build your maths, physics and chemistry base", "Mines and metal plants are run on these subjects.", NPTEL,
+         "Solve one problem from each subject every day, and keep a notebook."),
+    step(1, 2, "Learn safety first", "Mines and furnaces are dangerous, so safe habits come before everything else.", NPTEL,
+         "Learn the safety signs and rules in your college workshop, and follow them every time."),
+    step(2, 1, "Learn rocks, minerals and materials", "You must know what you are digging or melting.", NPTEL,
+         "Collect five rock or metal samples, and write what each is and where it is used."),
+    step(2, 2, "Learn how ores become metals", "This links mining to metallurgy and to real industry.", IBM,
+         "Draw the steps from ore to finished steel or aluminium."),
+    step(3, 1, "Learn the machines and plants", "Engineers plan and look after big equipment.", NPTEL,
+         "Pick one machine, such as a crusher or furnace, and explain how it works."),
+    step(3, 2, "Visit or train at a mine or metal plant", "Site training shows how real operations run.", INTERNSHALA,
+         "Do one industrial training, and keep a short daily diary of what you saw."),
+    step(4, 1, "Learn environment and mine rules", "Mining and metal work must follow strict rules and protect nature.", IBM,
+         "Read the Indian Bureau of Mines website, and list three rules that affect your work."),
+    step(4, 2, "Finish a project and prepare for jobs", "A focused project shows what you can do.", NCS,
+         "Finish a final-year project, make a one-page resume, and practise interviews."),
+])
+
 from scripts.engineering_links import COURSE_ROADMAPS  # noqa: E402
 
 
