@@ -1,14 +1,9 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { api } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 import { useMyPath } from '../context/useMyCourse'
 import { AreaGrid } from './Choose'
-
-const JOURNEY = [
-  ['Choose an area', 'Pick an area, then a course and a career.'],
-  ['Follow the path', 'See what to learn and do, step by step.'],
-  ['Keep up with change', 'See what is changing in your field, and what to learn because of it.'],
-  ['Reach your opportunity', 'See the jobs, study and other options at the end of your path.'],
-]
 
 /** The two ways to use the site: look around freely, or follow and save your own path. */
 function TwoWays() {
@@ -53,6 +48,23 @@ function TwoWays() {
   )
 }
 
+/** A student with a path gets one line to it; everyone else sees the two ways to use the site. */
+function YourPathOrTwoWays() {
+  const { slug } = useMyPath()
+  const [name, setName] = useState('')
+  useEffect(() => {
+    if (slug) api.roadmap(slug, 'en').then((found) => setName(found.name)).catch(() => setName(''))
+  }, [slug])
+  if (!slug) return <TwoWays />
+  return (
+    <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-line bg-white p-4 shadow-sm">
+      <span aria-hidden="true" className="text-2xl">🎯</span>
+      <span>Your path: <strong>{name || '…'}</strong></span>
+      <Link to="/my-path" className="btn btn-primary !min-h-9 !py-1 ml-auto">Continue →</Link>
+    </p>
+  )
+}
+
 export function Home() {
   return (
     <>
@@ -68,16 +80,8 @@ export function Home() {
         </div>
       </section>
 
-      <TwoWays />
+      <YourPathOrTwoWays />
 
-      <ol className="mt-6 flex flex-wrap items-center gap-2 text-sm font-semibold text-pine" aria-label="How it works">
-        {JOURNEY.map(([title], index) => (
-          <li key={title} className="flex items-center gap-2">
-            {index > 0 && <span aria-hidden="true" className="text-muted">→</span>}
-            <span className="rounded-full bg-pine-soft px-3 py-1">{index + 1}. {title}</span>
-          </li>
-        ))}
-      </ol>
 
       <section id="careers" className="mt-8 scroll-mt-20">
         <h2 className="text-2xl">What area interests you?</h2>

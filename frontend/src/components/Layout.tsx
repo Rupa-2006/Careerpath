@@ -5,10 +5,8 @@ import { useLang, type TextKey } from '../context/Language'
 
 const NAV: [string, TextKey][] = [
   ['/', 'nav_home'],
-  ['/choose', 'nav_roadmaps'],
+  ['/choose', 'nav_explore'],
   ['/my-path', 'nav_my_course'],
-  ['/updates', 'nav_updates'],
-  ['/all-courses', 'nav_courses'],
   ['/scholarships', 'nav_scholarships'],
   ['/assistant', 'nav_assistant'],
 ]
@@ -46,7 +44,6 @@ export function Layout() {
             {user ? (
               <>
                 {user.role === 'admin' && <NavLink to="/admin" className={navClass}>Admin</NavLink>}
-                <NavLink to="/my-progress" className={navClass}>{t('my_progress')}</NavLink>
                 <NavLink to="/account" className={navClass}>{t('my_account')}</NavLink>
                 <button type="button" onClick={handleLogout} className="cursor-pointer rounded-md px-2 py-2 text-sm hover:bg-white/10">{t('log_out')}</button>
               </>
@@ -83,12 +80,6 @@ export function Layout() {
         <div className="mx-auto max-w-7xl">
           <p className="font-bold text-white">CareerPath: Discover Your Future</p>
           <p className="mt-1">{t('footer_note')}</p>
-          <p className="mt-2 flex flex-wrap gap-4">
-            <Link to="/quiz" className="text-white">{t('take_quiz')}</Link>
-            <Link to="/skills" className="text-white">Skills checklist</Link>
-            <Link to="/compare" className="text-white">Compare courses</Link>
-            <Link to="/compare-careers" className="text-white">Compare careers</Link>
-          </p>
         </div>
       </footer>
     </div>

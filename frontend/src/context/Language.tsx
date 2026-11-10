@@ -14,7 +14,7 @@ const TEXT = {
   nav_scholarships: ['Scholarships', ''],
   nav_my_course: ['My Path', ''],
   nav_jobs: ['Internships and Jobs', 'ఇంటర్న్‌షిప్‌లు, ఉద్యోగాలు'],
-  nav_assistant: ['Career Assistant', 'కెరీర్ సహాయకుడు'],
+  nav_assistant: ['Ask', 'కెరీర్ సహాయకుడు'],
   log_in: ['Log in', 'లాగిన్'],
   sign_up: ['Sign up', 'రిజిస్టర్'],
   log_out: ['Log out', 'లాగ్ అవుట్'],

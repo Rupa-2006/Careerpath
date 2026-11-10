@@ -20,7 +20,7 @@ import { MyPath } from './pages/MyCourse'
 import { Scholarships } from './pages/Scholarships'
 import { NotFound } from './pages/Planned'
 import { Quiz } from './pages/Quiz'
-import { MyProgress, RoadmapPage, Roadmaps } from './pages/Roadmaps'
+import { RoadmapPage, Roadmaps } from './pages/Roadmaps'
 import { Skills } from './pages/Skills'
 
 function Protected({ children, admin = false }: { children: ReactNode; admin?: boolean }) {
@@ -73,7 +73,7 @@ export default function App() {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route path="account" element={<Protected><Account /></Protected>} />
-            <Route path="my-progress" element={<Protected><MyProgress /></Protected>} />
+            <Route path="my-progress" element={<Navigate to="/my-path?tab=progress" replace />} />
             <Route path="admin" element={<Protected admin><Admin /></Protected>} />
             <Route path="*" element={<NotFound />} />
           </Route>

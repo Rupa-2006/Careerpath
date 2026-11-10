@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { api, type ApiError, type RoadmapDetail, type Skill } from '../api/client'
+import { AfterRoadmap, CareerNews } from '../components/CareerExtras'
 import { CareerPicker } from '../components/CareerPicker'
 import { Notice } from '../components/Form'
 import { ProgressTracker } from '../components/ProgressTracker'
@@ -22,7 +23,19 @@ function SaveBanner() {
   )
 }
 
+const TABS = [
+  ['next', 'Next steps'],
+  ['progress', 'My progress'],
+  ['skills', 'My skills'],
+  ['changes', "What's changing"],
+  ['opportunities', 'Opportunities'],
+] as const
+type Tab = (typeof TABS)[number][0]
+
+/** Everything about the student's own path, on one page. */
 export function MyPath() {
+  const [params, setParams] = useSearchParams()
+  const tab: Tab = TABS.some(([key]) => key === params.get('tab')) ? params.get('tab') as Tab : 'next'
   const { slug, from, choose, fixed } = useMyPath()
   const { done } = useDoneSteps()
   const { have, toggle } = useMySkills()
@@ -64,26 +77,51 @@ export function MyPath() {
       <p className="mt-3 font-semibold">{finished.length} of {roadmap.steps.length} steps done ({percent}%)</p>
       <progress max={100} value={percent} className="mt-1 h-3 w-full accent-teal" aria-label="Path progress" />
 
-      <h2 className="mt-6 text-2xl">What to do next</h2>
-      {next.length === 0 && <p className="mt-2">You've finished every step. Look at your options below.</p>}
-      <ol className="mt-3 grid gap-3">
-        {next.map((step) => (
-          <li key={step.id} className="card">
-            <h3 className="text-lg">{step.title}</h3>
-            <p className="mt-1">{step.why}</p>
-            {step.build_task && <p className="mt-1 text-sm"><strong>Try this:</strong> {step.build_task}</p>}
-          </li>
+      <div role="tablist" aria-label="My Path" className="mt-6 flex gap-1 overflow-x-auto border-b border-line print:hidden">
+        {TABS.map(([key, label]) => (
+          <button
+            key={key} type="button" role="tab" aria-selected={tab === key}
+            onClick={() => setParams(key === 'next' ? {} : { tab: key }, { replace: true })}
+            className={`-mb-px shrink-0 cursor-pointer border-b-2 px-3 py-2 text-sm font-semibold ${tab === key ? 'border-teal text-pine' : 'border-transparent text-muted hover:text-pine'}`}
+          >
+            {label}
+          </button>
         ))}
-      </ol>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <Link to={`/roadmaps/${roadmap.slug}${from ? `?${from}` : ''}`} className="btn btn-primary">Open my full path</Link>
-        <Link to={`/compare-careers?a=${roadmap.slug}`} className="btn btn-outline">Compare with another career</Link>
-        {!fixed && <button type="button" className="btn btn-outline" onClick={() => { choose(''); setRoadmap(null) }}>Change my career</button>}
       </div>
 
-      <ProgressTracker roadmap={roadmap} done={done} skills={skills} have={have} />
-      {skills.length > 0 && <SkillGap skills={skills} career={roadmap.name} have={have} toggle={toggle} />}
-      <TechChanges roadmap={roadmap.slug} title="What's changing, and what to learn" />
+      {tab === 'next' && (
+        <section role="tabpanel">
+          {next.length === 0 && <p className="mt-4">You've finished every step. Look at your opportunities.</p>}
+          <ol className="mt-4 grid gap-3">
+            {next.map((step) => (
+              <li key={step.id} className="card">
+                <p className="text-xs font-semibold uppercase text-teal">Year {step.year}</p>
+                <h3 className="text-lg">{step.title}</h3>
+                <p className="mt-1">{step.why}</p>
+                {step.build_task && <p className="mt-1 text-sm"><strong>Try this:</strong> {step.build_task}</p>}
+              </li>
+            ))}
+          </ol>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link to={`/roadmaps/${roadmap.slug}${from ? `?${from}` : ''}`} className="btn btn-primary">Open my full roadmap</Link>
+            <Link to={`/compare-careers?a=${roadmap.slug}`} className="btn btn-outline">Compare with another career</Link>
+            {!fixed && <button type="button" className="btn btn-outline" onClick={() => { choose(''); setRoadmap(null) }}>Change my career</button>}
+          </div>
+        </section>
+      )}
+      {tab === 'progress' && <ProgressTracker roadmap={roadmap} done={done} skills={skills} have={have} />}
+      {tab === 'skills' && (
+        skills.length > 0
+          ? <SkillGap skills={skills} career={roadmap.name} have={have} toggle={toggle} />
+          : <p className="mt-4 text-muted">No skills added for this career yet.</p>
+      )}
+      {tab === 'changes' && (
+        <>
+          <TechChanges roadmap={roadmap.slug} title="What's changing, and what to learn" />
+          <CareerNews roadmap={roadmap.slug} />
+        </>
+      )}
+      {tab === 'opportunities' && <AfterRoadmap roadmap={roadmap.slug} course={new URLSearchParams(from).get('course') ?? ''} title="Where your path can take you" />}
     </div>
   )
 }

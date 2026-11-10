@@ -51,9 +51,32 @@ export function ChooseArea() {
   return (
     <>
       <Steps current={0} />
-      <h1 className="text-3xl">What area interests you?</h1>
-      <p className="mb-4 mt-2 text-muted">Pick one to see its courses.</p>
+      <h1 className="text-3xl">Explore careers</h1>
+      <p className="mb-4 mt-2 text-muted">Pick an area to see its courses, then a career and its path.</p>
       <AreaGrid />
+
+      <h2 className="mt-10 text-2xl">More ways to explore</h2>
+      <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {[
+          ['/quiz', '🧩', 'Not sure? Take the quiz', 'Answer a few questions to find areas that suit you.'],
+          ['/roadmaps', '🗺️', 'All career paths', 'Search every career and its year-by-year path.'],
+          ['/all-courses', '📚', 'Full course list', 'Every official course name in AP and Telangana.'],
+          ['/compare', '⚖️', 'Compare courses', 'Put 2 or 3 courses side by side.'],
+          ['/compare-careers', '🔀', 'Compare careers', 'See two careers and their paths side by side.'],
+          ['/skills', '🧠', 'Skills checklist', 'Skills every career needs, with small projects.'],
+          ['/updates', '📰', "What's changing", 'Technology and field changes across careers.'],
+        ].map(([to, icon, title, text]) => (
+          <li key={to}>
+            <Link to={to} className="card flex h-full items-start gap-3 text-ink no-underline">
+              <span aria-hidden="true" className="text-2xl">{icon}</span>
+              <span>
+                <span className="block font-bold text-pine">{title}</span>
+                <span className="mt-1 block text-sm text-muted">{text}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </>
   )
 }
