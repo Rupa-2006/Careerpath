@@ -1,10 +1,11 @@
 """
-Changing the career chosen at sign-up.
-A student may change it once by themselves. After that, each change is a request an admin approves or rejects.
+Changing the career chosen at sign-up, with no admin needed.
+The first change is free. After that, a student can change again once 6 months have passed since the last change.
 Progress is never deleted: steps from the old path stay saved and come back if the student returns to it.
+(Older accounts may still have requests from when an admin had to approve them; admins can still answer those.)
 """
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import select
@@ -15,6 +16,7 @@ from app.models import PathChangeRequest, Roadmap, UpdateHistory, User
 from app.schemas import PathChangeDecisionIn, PathChangeIn, PathChangeOut, PathChangeRequestOut, PathChangeStatus
 
 FREE_CHANGES = 1
+WAIT_DAYS = 182   # about 6 months between changes after the free one
 
 router = APIRouter(tags=["path change"])
 
@@ -35,6 +37,24 @@ def apply_path(db: Db, user: User, path: str, actor_id: uuid.UUID, how: str) -> 
     ))
 
 
+def last_change(db: Db, user: User) -> datetime | None:
+    return db.scalar(
+        select(UpdateHistory.created_at).where(UpdateHistory.entity_type == "user_path", UpdateHistory.entity_id == str(user.id))
+        .order_by(UpdateHistory.created_at.desc()).limit(1)
+    )
+
+
+def next_change_on(db: Db, user: User) -> datetime | None:
+    """None means the student can change now."""
+    if user.path_changes < FREE_CHANGES:
+        return None
+    last = last_change(db, user)
+    if last is None:
+        return None
+    ready = last + timedelta(days=WAIT_DAYS)
+    return ready if ready > datetime.now(UTC) else None
+
+
 def request_out(db: Db, item: PathChangeRequest) -> PathChangeRequestOut:
     return PathChangeRequestOut(
         id=item.id, from_path=item.from_path, from_name=roadmap_name(db, item.from_path),
@@ -52,7 +72,7 @@ def my_path_change(user: CurrentUser, db: Db) -> PathChangeStatus:
     )
     return PathChangeStatus(
         path=user.path, free_left=max(0, FREE_CHANGES - user.path_changes),
-        latest=request_out(db, latest) if latest else None,
+        latest=request_out(db, latest) if latest else None, next_change_on=next_change_on(db, user),
     )
 
 
@@ -63,21 +83,16 @@ def change_my_path(data: PathChangeIn, user: CurrentUser, db: Db) -> PathChangeO
     if db.scalar(select(Roadmap.id).where(Roadmap.slug == data.path)) is None:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Please choose a career from the list.")
 
-    if user.path_changes < FREE_CHANGES:
-        apply_path(db, user, data.path, user.id, "changed_by_student")
-        user.path_changes += 1
-        db.commit()
-        return PathChangeOut(result="changed", message=f"Your path is now {roadmap_name(db, data.path)}.")
-
-    waiting = db.scalar(select(PathChangeRequest.id).where(
-        PathChangeRequest.user_id == user.id, PathChangeRequest.status == "pending"))
-    if waiting:
-        raise HTTPException(status.HTTP_409_CONFLICT, "You already have a request waiting. Please wait for an answer.")
-    if not data.reason:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "Please tell us why you want to change your path.")
-    db.add(PathChangeRequest(user_id=user.id, from_path=user.path, to_path=data.path, reason=data.reason))
+    ready = next_change_on(db, user)
+    if ready is not None:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            f"You can change your path again from {ready.strftime('%d %B %Y')}. This keeps your path steady while you work on it.",
+        )
+    apply_path(db, user, data.path, user.id, "changed_by_student")
+    user.path_changes += 1
     db.commit()
-    return PathChangeOut(result="requested", message="Your request has been sent. An admin will check it.")
+    return PathChangeOut(result="changed", message=f"Your path is now {roadmap_name(db, data.path)}.")
 
 
 @router.get("/admin/path-requests", response_model=list[PathChangeRequestOut])

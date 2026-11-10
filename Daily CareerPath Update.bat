@@ -19,6 +19,7 @@ rem Each step therefore gets a second try two minutes later. Nothing about the s
 call :run scripts.watch_sources
 call :run scripts.fetch_updates
 call :run scripts.sync_official
+call :run scripts.auto_tidy
 rem Backups: the database and the code history go to OneDrive, so nothing is lost if this laptop breaks.
 venv\Scripts\python -m scripts.backup_db >> "%LOG%" 2>&1
 cd /d "%ROOT%"

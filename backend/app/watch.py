@@ -76,6 +76,24 @@ def what_changed(old: str, new: str) -> str:
     return "\n".join(marked)[:SUMMARY_CHARS]
 
 
+# Lines that change on their own (visitor counts, refresh times, totals) are never worth an alert.
+NOISE_LINE = re.compile(r"refreshed|visitor|hits\b|page views|crore|lakh|copyright|©|last updated on|server time", re.I)
+# Words that usually mean something students care about has changed.
+IMPORTANT = re.compile(
+    r"notification|eligib|last date|schedule|admission|counsell?ing|\bfee|exam|apply|application|registration|"
+    r"result|deadline|brochure|prospectus|booklet|seat|rank|merit|syllabus|guideline|rule|cut-?off|20[2-3]\d", re.I,
+)
+
+
+def is_important(summary: str) -> bool:
+    """True when a real line (not noise) mentions dates, rules, admissions or similar."""
+    for line in summary.split("\n"):
+        text = line.split(": ", 1)[-1]
+        if text.strip() and not NOISE_LINE.search(text) and IMPORTANT.search(text):
+            return True
+    return False
+
+
 def check_one(watch: SourceWatch, read: Callable[[str], str] = fetch) -> str:
     """Returns one of: new, same, changed, unreadable, failed."""
     watch.last_checked_at = datetime.now(UTC)
@@ -94,8 +112,11 @@ def check_one(watch: SourceWatch, read: Callable[[str], str] = fetch) -> str:
         return "new"
     if digest == watch.content_hash:
         return "same"
-    watch.change_summary = what_changed(watch.last_text or "", text)
+    summary = what_changed(watch.last_text or "", text)
     watch.content_hash, watch.last_text = digest, text
+    if not is_important(summary):
+        return "minor"   # saved quietly: small changes never ask anyone to look
+    watch.change_summary = summary
     watch.last_changed_at, watch.needs_review = datetime.now(UTC), True
     return "changed"
 

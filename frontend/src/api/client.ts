@@ -27,7 +27,7 @@ export type PathChangeRequest = {
   status: 'pending' | 'approved' | 'rejected'; created_at: string; decided_at: string | null
   student_email: string | null; student_name: string | null
 }
-export type PathChangeStatus = { path: string; free_left: number; latest: PathChangeRequest | null }
+export type PathChangeStatus = { path: string; free_left: number; latest: PathChangeRequest | null; next_change_on: string | null }
 export type Region = { id: number; code: string; name: string; kind: 'state' | 'union_territory' }
 export type Stream = { id: number; slug: string; name: string; aliases: string[]; subjects: { id: number; name: string }[] }
 

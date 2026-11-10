@@ -641,6 +641,7 @@ class PathChangeStatus(BaseModel):
     path: str
     free_left: int
     latest: PathChangeRequestOut | None
+    next_change_on: datetime | None = None   # None: the student can change now
 
 
 class PathChangeDecisionIn(BaseModel):

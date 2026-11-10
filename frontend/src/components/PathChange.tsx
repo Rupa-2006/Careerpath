@@ -9,7 +9,7 @@ const STATUS_TEXT: Record<string, string> = {
   rejected: '❌ Not approved',
 }
 
-/** On the Account page: one free change of career, then requests that an admin answers. */
+/** On the Account page: change your career yourself. After the first change, once every 6 months. No admin needed. */
 export function PathChange() {
   const { setUser } = useAuth()
   const [state, setState] = useState<PathChangeStatus | null>(null)
@@ -30,6 +30,9 @@ export function PathChange() {
   const current = careers.find((item) => item.slug === state.path)?.name ?? state.path
   const free = state.free_left > 0
   const waiting = state.latest?.status === 'pending'
+  const locked = state.next_change_on
+    ? new Date(state.next_change_on).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+    : ''
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -65,12 +68,15 @@ export function PathChange() {
         </div>
       )}
 
-      {!waiting && (
+      {locked && !waiting && (
+        <p className="mt-3 text-sm text-muted">You can change your path again from <strong>{locked}</strong>. This keeps your path steady while you work on it.</p>
+      )}
+      {!waiting && !locked && (
         <form onSubmit={submit} className="mt-4">
           <p className="mb-3 text-sm text-muted">
             {free
-              ? 'You can change your path once by yourself. Your progress is kept: if you ever come back to this path, your ticks return.'
-              : 'You have used your free change. You can ask an admin to change it, and tell them why.'}
+              ? 'You can change your path yourself. Your progress is kept: if you ever come back to this path, your ticks return.'
+              : 'You can change your path again now. After this, the next change is possible in 6 months.'}
           </p>
           <Field label="New career path">
             <select className="input" required value={path} onChange={(event) => setPath(event.target.value)}>
@@ -78,17 +84,17 @@ export function PathChange() {
               {careers.filter((item) => item.slug !== state.path).map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
             </select>
           </Field>
-          <Field label={free ? 'Why are you changing? (optional)' : 'Why do you want to change?'}>
-            <textarea className="input" rows={2} maxLength={300} required={!free} value={reason} onChange={(event) => setReason(event.target.value)} />
+          <Field label="Why are you changing? (optional)">
+            <textarea className="input" rows={2} maxLength={300} value={reason} onChange={(event) => setReason(event.target.value)} />
           </Field>
-          {free && (
+          {(
             <label className="mb-3 flex items-start gap-2 text-sm">
               <input type="checkbox" className="mt-1" checked={sure} onChange={(event) => setSure(event.target.checked)} />
-              <span>I understand this is my <strong>only free change</strong>. After this, changes need an admin's approval.</span>
+              <span>I understand that after this change, I can change again only after <strong>6 months</strong>.</span>
             </label>
           )}
-          <button type="submit" className="btn btn-primary" disabled={busy || !path || (free && !sure) || (!free && !reason.trim())}>
-            {busy ? 'Please wait…' : free ? 'Change my path' : 'Send request'}
+          <button type="submit" className="btn btn-primary" disabled={busy || !path || !sure}>
+            {busy ? 'Please wait…' : 'Change my path'}
           </button>
         </form>
       )}

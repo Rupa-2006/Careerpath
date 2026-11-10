@@ -220,8 +220,22 @@ class TestQuiz:
                 continue
             subjects = {subject.id for subject in stream.subjects}
             allowed = {c.id for c in courses if check(c, subjects, None, ALL).status != "not_eligible"}
-            for chosen in itertools.product(*lists):
-                reached |= {item["course"].slug for item in rank_courses(chosen, allowed)[:3]}
+            # For each course, answer every question in the way that helps it most and its rivals least.
+            # Trying every combination proves the same thing, but takes far too long with this many answers.
+            for course in courses:
+                if course.id not in allowed or course.slug in reached:
+                    continue
+                # In each question, the answers worth trying: those naming the course, else the few that help the fewest rivals
+                candidates = []
+                for options in lists:
+                    with_it = [item for item in options if any(c.id == course.id for c in item[1].courses)]
+                    others = sorted(options, key=lambda item: (sum(1 for c in item[1].courses if c.id in allowed), len(item[1].courses)))
+                    candidates.append(with_it or others[:3])
+                for chosen in itertools.product(*candidates):
+                    top = {item["course"].slug for item in rank_courses(chosen, allowed)[:3]}
+                    reached |= top
+                    if course.slug in top:
+                        break
         assert reached == {course.slug for course in courses}
 
     def test_group_rules_are_applied(self, client, db, show_all):
