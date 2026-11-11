@@ -140,7 +140,7 @@ def hash_code(code: str) -> str:
 def email_ready() -> None:
     """Online without an email service, the codes can't reach anyone, so say so plainly instead of pretending."""
     settings = get_settings()
-    if settings.is_production and not settings.smtp_host:
+    if settings.is_production and not settings.email_on:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,
             "Email recovery isn't switched on yet. Please contact the site admin to reset your password.",

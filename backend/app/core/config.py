@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_from: str = ""
 
+    @property
+    def email_on(self) -> bool:
+        """Real emails need the server, the login and the key. Anything missing means no email is sent."""
+        return bool(self.smtp_host and self.smtp_user and self.smtp_password)
+
     @field_validator("database_url")
     @classmethod
     def use_psycopg(cls, value: str) -> str:

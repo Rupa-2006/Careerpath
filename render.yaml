@@ -22,6 +22,17 @@ services:
         value: https://pathmithra.onrender.com
       - key: SHOW_UNPUBLISHED
         value: "false"
+      # Account emails (password reset codes) through Brevo's free SMTP. The login, key and sender are entered in Render.
+      - key: SMTP_HOST
+        value: smtp-relay.brevo.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
 
   - type: web
     name: pathmithra

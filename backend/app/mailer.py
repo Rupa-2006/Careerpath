@@ -18,7 +18,7 @@ LAPTOP_LOG = BACKEND_DIR / "laptop-emails.log"
 def send_email(to: str, subject: str, body: str) -> bool:
     """Returns True if the email was handed over (or printed in laptop mode). Never raises."""
     settings = get_settings()
-    if not settings.smtp_host:
+    if not settings.email_on:
         if settings.is_production:
             log.error("Email not sent: SMTP is not set up. Subject: %s", subject)
             return False
