@@ -6,7 +6,7 @@ export function CollegeAttribution() {
     <p className="mt-6 text-xs text-muted">
       College directory: Department of Higher Education, Ministry of Education,{' '}
       <a href={DATASET} target="_blank" rel="noopener noreferrer">All Colleges as per AISHE Dashboard</a>, AIKosh.
-      Published under the Government Open Data License - India. CareerPath is not endorsed by the data provider.
+      Published under the Government Open Data License - India. PathMithra is not endorsed by the data provider.
     </p>
   )
 }

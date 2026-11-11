@@ -60,7 +60,7 @@ def page_text(raw: str) -> str:
 
 
 def fetch(url: str) -> str:
-    request = urllib.request.Request(url, headers={"User-Agent": "CareerPath-source-watch/1.0", "Accept-Encoding": "identity"})
+    request = urllib.request.Request(url, headers={"User-Agent": "PathMithra-source-watch/1.0", "Accept-Encoding": "identity"})
     with urllib.request.urlopen(request, timeout=TIMEOUT_SECONDS) as response:  # noqa: S310 - fixed official URLs only
         body = response.read(MAX_PAGE_BYTES)
     if body[:2] == b"\x1f\x8b":   # some sites send compressed pages even when not asked

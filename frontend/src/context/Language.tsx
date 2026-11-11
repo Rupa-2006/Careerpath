@@ -121,7 +121,7 @@ const TEXT = {
 
   as_title: ['Career Assistant', 'కెరీర్ సహాయకుడు'],
   as_help: ['Tell me what you enjoy, or ask about a course, exam or career. I show options and explain why, and you decide.', 'మీకు ఏది ఇష్టమో చెప్పండి, లేదా కోర్సు, పరీక్ష, కెరీర్ గురించి అడగండి. నేను ఎంపికలు, కారణాలు చూపిస్తాను, నిర్ణయం మీదే.'],
-  as_trust: ['Answers come only from CareerPath records and eligibility rules. This chat is not saved, and it disappears when you leave. Please do not type your name, phone number or other personal details.', 'సమాధానాలు CareerPath రికార్డులు, అర్హత నియమాల నుండి మాత్రమే వస్తాయి. ఈ చాట్ సేవ్ కాదు, మీరు వెళ్ళిపోయినప్పుడు తొలగిపోతుంది. దయచేసి మీ పేరు, ఫోన్ నంబర్ లేదా ఇతర వ్యక్తిగత వివరాలు టైప్ చేయవద్దు.'],
+  as_trust: ['Answers come only from PathMithra records and eligibility rules. This chat is not saved, and it disappears when you leave. Please do not type your name, phone number or other personal details.', 'సమాధానాలు CareerPath రికార్డులు, అర్హత నియమాల నుండి మాత్రమే వస్తాయి. ఈ చాట్ సేవ్ కాదు, మీరు వెళ్ళిపోయినప్పుడు తొలగిపోతుంది. దయచేసి మీ పేరు, ఫోన్ నంబర్ లేదా ఇతర వ్యక్తిగత వివరాలు టైప్ చేయవద్దు.'],
   as_english: ['', 'ప్రస్తుతం సహాయకుడు ఇంగ్లీష్‌లో మాత్రమే సమాధానం ఇస్తుంది. దయచేసి ఇంగ్లీష్‌లో అడగండి.'],
   as_background: ['Your subjects and State', 'మీ సబ్జెక్టులు, రాష్ట్రం'],
   as_label: ['Your question', 'మీ ప్రశ్న'],

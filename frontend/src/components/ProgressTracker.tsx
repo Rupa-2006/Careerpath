@@ -102,7 +102,7 @@ export function ProgressTracker({ roadmap, done, skills, have }: { roadmap: Road
     if (importProgress(await file.text())) {
       window.location.reload()
     } else {
-      setMessage("That file isn't a CareerPath progress file.")
+      setMessage("That file isn't a PathMithra progress file.")
     }
   }
 

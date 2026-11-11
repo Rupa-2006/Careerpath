@@ -1,9 +1,9 @@
-# Render Blueprint for CareerPath (free plan).
-# - careerpath-api: the FastAPI server. Its database is on Neon; the link is entered once in Render, never stored here.
-# - careerpath: the website. Requests to /api/ are passed to the server, so logins work on one address.
+# Render Blueprint for PathMithra (free plan).
+# - pathmithra-api: the FastAPI server. Its database is on Neon; the link is entered once in Render, never stored here.
+# - pathmithra: the website. Requests to /api/ are passed to the server, so logins work on one address.
 services:
   - type: web
-    name: careerpath-api
+    name: pathmithra-api
     runtime: python
     plan: free
     region: singapore
@@ -19,12 +19,12 @@ services:
       - key: DATABASE_URL
         sync: false          # paste the Neon connection link in Render when asked
       - key: ALLOWED_ORIGINS
-        value: https://careerpath-aa51.onrender.com
+        value: https://pathmithra.onrender.com
       - key: SHOW_UNPUBLISHED
         value: "false"
 
   - type: web
-    name: careerpath
+    name: pathmithra
     runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build
@@ -32,7 +32,7 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://careerpath-api-j1j3.onrender.com/api/*
+        destination: https://pathmithra-api.onrender.com/api/*
       - type: rewrite
         source: /*
         destination: /index.html

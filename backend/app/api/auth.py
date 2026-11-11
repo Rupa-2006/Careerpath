@@ -154,8 +154,8 @@ def forgot_password(data: ForgotIn, request: Request, db: Db) -> dict:
         db.execute(delete(PasswordReset).where(PasswordReset.user_id == user.id))   # only the newest code works
         db.add(PasswordReset(user_id=user.id, code_hash=hash_code(code), expires_at=datetime.now(UTC) + timedelta(minutes=RESET_MINUTES)))
         db.commit()
-        send_email(email, "Your CareerPath reset code", (
-            f"Hello {user.username},\n\nYour code to reset your CareerPath password is: {code}\n\n"
+        send_email(email, "Your PathMithra reset code", (
+            f"Hello {user.username},\n\nYour code to reset your PathMithra password is: {code}\n\n"
             f"It works once and expires in {RESET_MINUTES} minutes. If you didn't ask for this, you can ignore this email."
         ))
     return {"message": SENT}
@@ -194,7 +194,7 @@ def forgot_username(data: ForgotIn, request: Request, db: Db) -> dict:
     slow_down(db, request, "forgot-username", email)
     user = db.scalar(select(User).where(User.email == email, User.is_active.is_(True)))
     if user:
-        send_email(email, "Your CareerPath username", (
-            f"Hello,\n\nYour CareerPath username is: {user.username}\n\nYou can log in with it and your password."
+        send_email(email, "Your PathMithra username", (
+            f"Hello,\n\nYour PathMithra username is: {user.username}\n\nYou can log in with it and your password."
         ))
     return {"message": SENT}

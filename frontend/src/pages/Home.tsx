@@ -11,7 +11,7 @@ function TwoWays() {
   const { slug } = useMyPath()
   const name = user?.name?.split(' ')[0]
   return (
-    <section className="mt-6 grid gap-4 md:grid-cols-2" aria-label="Two ways to use CareerPath">
+    <section className="mt-6 grid gap-4 md:grid-cols-2" aria-label="Two ways to use PathMithra">
       <div className="card flex flex-col border-t-4 border-t-teal">
         <p className="text-3xl" aria-hidden="true">🧭</p>
         <h2 className="mt-2 text-2xl">Explore careers</h2>

@@ -22,7 +22,7 @@ def send_email(to: str, subject: str, body: str) -> bool:
         if settings.is_production:
             log.error("Email not sent: SMTP is not set up. Subject: %s", subject)
             return False
-        text = (f"\n===== CareerPath email (laptop mode, not really sent) =====\nTo: {to}\nSubject: {subject}\n\n{body}\n"
+        text = (f"\n===== PathMithra email (laptop mode, not really sent) =====\nTo: {to}\nSubject: {subject}\n\n{body}\n"
                 "============================================================\n")
         print(text, flush=True)
         try:   # also kept in a file next to the server; *.log files are never uploaded to GitHub

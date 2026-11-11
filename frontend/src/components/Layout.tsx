@@ -37,7 +37,7 @@ export function Layout() {
       <header className="sticky top-0 z-20 bg-pine text-white print:hidden">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 px-4 py-2">
           <Link to="/" className="text-xl font-extrabold text-white no-underline">
-            Career<span className="text-sun">Path</span>
+            Path<span className="text-sun">Mithra</span>
           </Link>
 
           <div className="ml-auto flex items-center gap-2 xl:order-3">
@@ -78,7 +78,7 @@ export function Layout() {
 
       <footer className="bg-pine px-4 py-6 text-sm text-white/85 print:hidden">
         <div className="mx-auto max-w-7xl">
-          <p className="font-bold text-white">CareerPath: Discover Your Future</p>
+          <p className="font-bold text-white">PathMithra: your friend for the path after Intermediate</p>
           <p className="mt-1">{t('footer_note')}</p>
         </div>
       </footer>

@@ -20,7 +20,7 @@ PAGE_CSP = (
 
 settings = get_settings()
 app = FastAPI(
-    title="CareerPath API",
+    title="PathMithra API",
     docs_url=None if settings.is_production else "/api/docs",
     redoc_url=None,
     openapi_url=None if settings.is_production else "/api/openapi.json",
