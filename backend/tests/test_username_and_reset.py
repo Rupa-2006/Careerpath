@@ -96,3 +96,11 @@ def test_forgot_username_emails_it(client, student, outbox):
 def test_forgot_pages_are_rate_limited(client, student, outbox):
     codes = [client.post(f"{API}/forgot-username", json={"email": "asha@example.com"}).status_code for _ in range(6)]
     assert codes[-1] == 429
+
+
+def test_online_without_email_says_so_plainly(client, student, monkeypatch):
+    from app.core.config import get_settings
+    monkeypatch.setattr(get_settings(), "environment", "production")
+    monkeypatch.setattr(get_settings(), "smtp_host", "")
+    answer = client.post(f"{API}/forgot-password", json={"email": "asha@example.com"})
+    assert answer.status_code == 503 and "isn't switched on yet" in answer.json()["detail"]

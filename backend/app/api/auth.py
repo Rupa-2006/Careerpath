@@ -137,6 +137,16 @@ def hash_code(code: str) -> str:
     return hashlib.sha256(code.encode()).hexdigest()
 
 
+def email_ready() -> None:
+    """Online without an email service, the codes can't reach anyone, so say so plainly instead of pretending."""
+    settings = get_settings()
+    if settings.is_production and not settings.smtp_host:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "Email recovery isn't switched on yet. Please contact the site admin to reset your password.",
+        )
+
+
 def slow_down(db: Db, request: Request, kind: str, email: str) -> None:
     key = key_for(kind, email, client_ip(request))
     if is_rate_limited(db, key, FORGOT_LIMIT, FORGOT_WINDOW):
@@ -146,6 +156,7 @@ def slow_down(db: Db, request: Request, kind: str, email: str) -> None:
 
 @router.post("/forgot-password")
 def forgot_password(data: ForgotIn, request: Request, db: Db) -> dict:
+    email_ready()
     email = data.email.lower()
     slow_down(db, request, "forgot-password", email)
     user = db.scalar(select(User).where(User.email == email, User.is_active.is_(True)))
@@ -190,6 +201,7 @@ def reset_password(data: ResetPasswordIn, request: Request, db: Db) -> dict:
 
 @router.post("/forgot-username")
 def forgot_username(data: ForgotIn, request: Request, db: Db) -> dict:
+    email_ready()
     email = data.email.lower()
     slow_down(db, request, "forgot-username", email)
     user = db.scalar(select(User).where(User.email == email, User.is_active.is_(True)))
