@@ -35,12 +35,12 @@
 
 ```mermaid
 flowchart LR
-    Student[Student's browser] --> Site[Website on Render]
-    Site -->|/api| API[FastAPI server on Render]
-    API --> DB[(PostgreSQL on Neon)]
-    API -->|reset codes| Mail[Brevo email]
-    Daily[GitHub Actions, 9:00 daily] -->|official pages, news, course list| DB
-    Check[GitHub Actions, 9:30 daily] -->|is the site up?| Site
+    Student["Student browser"] --> Site["Website on Render"]
+    Site -->|"/api"| API["FastAPI server on Render"]
+    API --> DB[("PostgreSQL on Neon")]
+    API -->|"reset codes"| Mail["Brevo email"]
+    Daily["GitHub Actions, daily 9 AM"] -->|"official pages, news, course list"| DB
+    Check["GitHub Actions, daily 9.30 AM"] -->|"is the site up?"| Site
 ```
 
 **It runs by itself:**
