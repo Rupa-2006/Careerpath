@@ -97,7 +97,7 @@ cd backend
 python -m pytest
 ```
 
-On the owner's Windows laptop, `Start CareerPath.bat` starts everything, and a scheduled task keeps it running.
+On the owner's Windows laptop, `Start PathMithra.bat` starts everything, and a scheduled task keeps it running.
 
 ## Project structure
 
